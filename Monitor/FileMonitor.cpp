@@ -196,7 +196,15 @@ CreatePost(
 				if (NT_SUCCESS(status))
 				{
 					PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-					KdPrint(("Newfile进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+						//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+					ULONG Time = GetTime();
+					if (!IsSecretProcess(procName))
+					{
+						KdPrint(("%d Newfile进程 = %s,类型=%wZ,卷fu路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.ParentDir));
+
+					}
+					
+					
 
 
 					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
@@ -204,9 +212,7 @@ CreatePost(
 					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
 					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
 
-					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
-					/*	ULONG Time = GetTime();
-					KdPrint(("%ld \n ",Time));*/
+				
 				} 
 		 
 		/*		CHAR *lp ;
@@ -267,18 +273,25 @@ FLT_POSTOP_CALLBACK_STATUS
 	status = GetFileInformation(Data,FltObjects,&temCtx);
 	if (NT_SUCCESS(status))
 		{
+		
 			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-			KdPrint(("Write进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+			PEPROCESS  p = FltGetRequestorProcess(Data);
 
+
+			ULONG Time = GetTime();
+			if (!IsSecretProcess(procName))
+			{
+				ULONG ProcessId = FltGetRequestorProcessId(Data);  
+				ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread);  
+				KdPrint(("PID =%u,THID = %u\n",ThreadId,ProcessId));
+				KdPrint(("%d Write 进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileFullPath));
+			}
 
 					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
 					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
 					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
 					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
 
-					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
-					/*	ULONG Time = GetTime();
-					KdPrint(("%ld \n ",Time));*/
 		} 
 
 	return FLT_POSTOP_FINISHED_PROCESSING;
@@ -323,14 +336,24 @@ SetInformationPre(
 			if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformation)
 			{
 				PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-			    KdPrint(("delete进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
-			}
+				if (!IsSecretProcess(procName))
+				{
+					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+					ULONG Time = GetTime();
+				   KdPrint(("%d Delete进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+				}
+		}
 
 
 			if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileRenameInformation)
 			{
 				PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-				KdPrint(("rename进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+				if (!IsSecretProcess(procName))
+				{
+					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+				  ULONG Time = GetTime();
+				  KdPrint(("%d Rename进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+				}
 			}
 
 					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
@@ -338,9 +361,8 @@ SetInformationPre(
 					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
 					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
 
-					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
-					/*	ULONG Time = GetTime();
-					KdPrint(("%ld \n ",Time));*/
+				
+			
 		} 
 
 	return retValue;

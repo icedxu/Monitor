@@ -275,7 +275,8 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 					ctx->fileFullPath = nameInfo->Name;
 					ctx->fileStyle = nameInfo->Extension;
 					ctx->fileVolumeName = nameInfo->Volume;
-					ctx->fileName  = nameInfo->ParentDir;
+					ctx->ParentDir  = nameInfo->ParentDir;
+				
 				}    
 			}
 		}
@@ -333,6 +334,171 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 		NowFields.Minute,
 		NowFields.Second));*/
 }
+  /***判断是否是要过滤掉的进程名  icedxu_2018_5_4**/
+ BOOLEAN  IsSecretProcess(CHAR  *processName)
+ {
+	 //PCHAR name = ";System;svchost.exe;vmtoolsd.exe;explorer.exe;SearchProtocol;iexplore.exe;SearchIndexer;taskhost.exe;WmiApSrv.exe;";
+	 PCHAR name = "qwef;";
+	if (strstr(name,processName) > 0)
+	{
+		return TRUE;
+	}
+	return FALSE;
+ }
+
+
+
+
+
+ //根据进程 ID 返回进程 EPROCESS，失败返回 NULL
+ //PEPROCESS LookupProcess(HANDLE Pid)
+ //{
+	// PEPROCESS eprocess = NULL;
+	// if (NT_SUCCESS(PsLookupProcessByProcessId(Pid, &eprocess))) 
+	//	 return eprocess;
+	// else
+	//	 return NULL;
+ //}
+ //枚举进程
+ //VOID EnumProcess()
+ //{
+	// ULONG i = 0;
+	// PEPROCESS eproc = NULL;
+	// for (i = 4; i<262144; i = i + 4)
+	// {
+	//	 eproc = LookupProcess((HANDLE)i);
+	//	 if (eproc != NULL)
+	//	 {
+	//		 DbgPrint("EPROCESS = %p, PID = %ld, PPID = %ld, Name = %s\n", 
+	//			 eproc,
+	//			 (UINT32)PsGetProcessId(eproc),
+	//			 (UINT32)PsGetProcessInheritedFromUniqueProcessId(eproc),
+	//			 PsGetProcessImageFileName(eproc));
+	//		 ObDereferenceObject(eproc);
+	//	 }
+	// }
+ //}
+
+
+ //typedef NTSTATUS (*QUERY_INFO_PROCESS) (
+	// __in HANDLE ProcessHandle,
+	// __in PROCESSINFOCLASS ProcessInformationClass,
+	// __out_bcount(ProcessInformationLength) PVOID ProcessInformation,
+	// __in ULONG ProcessInformationLength,
+	// __out_opt PULONG ReturnLength
+	// );
+
+ //QUERY_INFO_PROCESS ZwQueryInformationProcess;
+
+ //NTSTATUS PsGetProcessImageFileName(PUNICODE_STRING ProcessImageName)
+ //{
+	// NTSTATUS status;
+	// ULONG returnedLength;
+	// ULONG bufferLength;
+	// PVOID buffer;
+	// PUNICODE_STRING imageName;
+
+	// PAGED_CODE(); // this eliminates the possibility of the IDLE Thread/Process
+
+	// if (NULL == ZwQueryInformationProcess) {
+
+	//	 UNICODE_STRING routineName;
+
+	//	 RtlInitUnicodeString(&routineName, L"ZwQueryInformationProcess");
+
+	//	 ZwQueryInformationProcess = 
+	//		 (QUERY_INFO_PROCESS) MmGetSystemRoutineAddress(&routineName);
+
+	//	 if (NULL == ZwQueryInformationProcess) {
+	//		 DbgPrint("Cannot resolve ZwQueryInformationProcess\n");
+	//	 }
+	// }
+	// 
+	//  Step one - get the size we need
+	// 
+	// status = ZwQueryInformationProcess( NtCurrentProcess(), 
+	//	 ProcessImageFileName,
+	//	 NULL, // buffer
+	//	 0, // buffer size
+	//	 &returnedLength);
+
+	// if (STATUS_INFO_LENGTH_MISMATCH != status) {
+
+	//	 return status;
+
+	// }
+
+	// 
+	//  Is the passed-in buffer going to be big enough for us?  
+	//  This function returns a single contguous buffer model...
+	// 
+	// bufferLength = returnedLength - sizeof(UNICODE_STRING);
+
+	// if (ProcessImageName->MaximumLength < bufferLength) {
+
+	//	 ProcessImageName->Length = (USHORT) bufferLength;
+
+	//	 return STATUS_BUFFER_OVERFLOW;
+
+	// }
+
+	// 
+	//  If we get here, the buffer IS going to be big enough for us, so 
+	//  let's allocate some storage.
+	// 
+	// buffer = ExAllocatePoolWithTag(PagedPool, returnedLength, 'ipgD');
+
+	// if (NULL == buffer) {
+
+	//	 return STATUS_INSUFFICIENT_RESOURCES;
+
+	// }
+
+	// 
+	//  Now lets go get the data
+	// 
+	// status = ZwQueryInformationProcess( NtCurrentProcess(), 
+	//	 ProcessImageFileName,
+	//	 buffer,
+	//	 returnedLength,
+	//	 &returnedLength);
+
+	// if (NT_SUCCESS(status)) {
+	//	 
+	//	  Ah, we got what we needed
+	//	 
+	//	 imageName = (PUNICODE_STRING) buffer;
+
+	//	 RtlCopyUnicodeString(ProcessImageName, imageName);
+
+	// }
+
+	// 
+	//  free our buffer
+	// 
+	// ExFreePool(buffer);
+
+	// 
+	//  And tell the caller what happened.
+	//     
+	// return status;
+
+ //}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -21,19 +21,8 @@ extern "C" {
 }; // extern "C"
 
 #include "FileEncrypt.h"
-
 #include <stdarg.h>
 #endif
-
-
-
-#define FAT_NTC_FCB               0x0502
-#define FAT_NTC_DCB               0x0503
-#define FAT_NTC_ROOT_DCB          0x0504
-#define NTFS_NTC_DCB              0x0703
-#define NTFS_NTC_ROOT_DCB         0x0704
-#define NTFS_NTC_FCB              0x0705
-
 
 
 
@@ -128,7 +117,17 @@ GetProcessNameOffset(VOID);
 PCHAR
 GetCurrentProcessName(ULONG ProcessNameOffset);
 
+BOOLEAN  IsSecretProcess(CHAR  *processName);
 
+//枚举进程
+VOID EnumProcess();
+//声明 API
+NTKERNELAPI UCHAR* PsGetProcessImageFileName(IN PEPROCESS Process);
+NTKERNELAPI HANDLE PsGetProcessInheritedFromUniqueProcessId(IN PEPROCESS Process);
+//HANDLE PsGetProcessId( __in PEPROCESS Process );
+
+//根据进程 ID 返回进程 EPROCESS，失败返回 NULL
+PEPROCESS LookupProcess(HANDLE Pid);
 
 /************************************************************************/
 /*                   字符串函数                                             */
@@ -139,17 +138,6 @@ void wstr2cstr(const wchar_t *pwstr , char *pcstr, size_t len);
 
 //将char* 转成wchar_t*的实现函数如下：
 void cstr2wstr( const char *pcstr,wchar_t *pwstr , size_t len);
-
-
-
-
-
-
-
-
-
-
-
 
 
 

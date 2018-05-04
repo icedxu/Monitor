@@ -86,7 +86,7 @@ typedef struct _STREAM_HANDLE_CONTEXT
 {
 	//FILE_STANDARD_INFORMATION fileInfo;//文件信息
 
-	UNICODE_STRING  fileName;  //文件名
+	UNICODE_STRING  ParentDir;  //文件名
 
 	UNICODE_STRING  fileFullPath ;   //完整文件路径
 
@@ -232,7 +232,6 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 	__inout PSTREAM_HANDLE_CONTEXT ctx);
 
 
-void PurgeFileSystemBuffers(PFILE_OBJECT FileObject);
 
 
 CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
