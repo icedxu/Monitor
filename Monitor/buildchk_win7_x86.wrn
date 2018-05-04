@@ -1,0 +1,3 @@
+1>warnings in directory e:\vs_project\monitor\monitor
+1>e:\vs_project\monitor\monitor\tools.cpp(539) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
+1>e:\vs_project\monitor\monitor\tools.cpp(626) : warning C4129: '/' : unrecognized character escape sequence

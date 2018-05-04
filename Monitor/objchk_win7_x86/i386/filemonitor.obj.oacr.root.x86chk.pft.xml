@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+<OACRDEFECTCOUNT>4</OACRDEFECTCOUNT>
+<OACRERRORCOUNT>0</OACRERRORCOUNT>
+<DEFECT _seq="1"><SFA><LINE>67</LINE><COLUMN>10</COLUMN><FILENAME>filemonitor.cpp</FILENAME><FILEPATH>e:\vs_project\monitor\monitor\</FILEPATH></SFA><DEFECTCODE>28101</DEFECTCODE><DESCRIPTION>The Drivers module has inferred that the current function is a DRIVER_INITIALIZE function:  This is informational only. No problem has been detected.</DESCRIPTION><FUNCTION>DriverEntry</FUNCTION><FUNCLINE>67</FUNCLINE><PATH/></DEFECT>
+<DEFECT _seq="2"><SFA><LINE>453</LINE><COLUMN>0</COLUMN><FILENAME>filemonitor.cpp</FILENAME><FILEPATH>e:\vs_project\monitor\monitor\</FILEPATH></SFA><DEFECTCODE>28172</DEFECTCODE><DESCRIPTION>The function 'InstanceQueryTeardown' has PAGED_CODE or PAGED_CODE_LOCKED but is not declared to be in a paged segment.</DESCRIPTION><FUNCTION>InstanceQueryTeardown</FUNCTION><FUNCLINE>453</FUNCLINE><PATH/></DEFECT>
+<DEFECT _seq="3"><SFA><LINE>474</LINE><COLUMN>0</COLUMN><FILENAME>filemonitor.cpp</FILENAME><FILEPATH>e:\vs_project\monitor\monitor\</FILEPATH></SFA><DEFECTCODE>28172</DEFECTCODE><DESCRIPTION>The function 'MyConnectionCallback' has PAGED_CODE or PAGED_CODE_LOCKED but is not declared to be in a paged segment.</DESCRIPTION><FUNCTION>MyConnectionCallback</FUNCTION><FUNCLINE>474</FUNCLINE><PATH/></DEFECT>
+<DEFECT _seq="4"><SFA><LINE>496</LINE><COLUMN>0</COLUMN><FILENAME>filemonitor.cpp</FILENAME><FILEPATH>e:\vs_project\monitor\monitor\</FILEPATH></SFA><DEFECTCODE>28172</DEFECTCODE><DESCRIPTION>The function 'MyDisconnectCallback' has PAGED_CODE or PAGED_CODE_LOCKED but is not declared to be in a paged segment.</DESCRIPTION><FUNCTION>MyDisconnectCallback</FUNCTION><FUNCLINE>496</FUNCLINE><PATH/></DEFECT>
+</DEFECTS>

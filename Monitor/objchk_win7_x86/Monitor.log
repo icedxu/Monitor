@@ -1,0 +1,50 @@
+﻿生成启动时间为 2018/5/4 9:17:11。
+     1>项目“E:\VS_Project\Monitor\Monitor\Monitor.vcxproj”在节点 2 上(rebuild 个目标)。
+     1>CoreClean:
+         rmdir /s /q E:\VS_Project\Monitor\Monitor\\objchk_win7_x86
+         E:\VS_Project\Monitor\Monitor\\objchk_win7_x86\Monitor.log - 另一个程序正在使用此文件，进程无法访问。
+       Rebuild:
+         rmdir /s /q E:\VS_Project\Monitor\Monitor\\objchk_win7_x86
+         call D:\WINDDK\7600.16385.1\bin\setenv.bat D:\WINDDK\7600.16385.1 chk win7
+         cd /d E:\VS_Project\Monitor\Monitor\
+         build
+         E:\VS_Project\Monitor\Monitor\\objchk_win7_x86\Monitor.log - 另一个程序正在使用此文件，进程无法访问。
+         OACR monitor running already
+         path contains nonexistant c:\program files (x86)\microsoft visual studio 10.0\common7\tools\bin, removing
+         path contains nonexistant d:\qt\qt5.2.0\5.2.0\mingw\bin, removing
+         BUILD: Compile and Link for x86
+         
+         BUILD: Loading d:\winddk\7600.16385.1\build.dat...
+         
+         BUILD: Computing Include file dependencies:
+         
+         BUILD: Start time: Fri May 04 09:17:13 2018
+         BUILD: Examining e:\vs_project\monitor\monitor directory for files to compile.
+         
+             e:\vs_project\monitor\monitor 
+         
+         Invalidating OACR warning log for 'root:x86chk'
+         BUILD: Saving d:\winddk\7600.16385.1\build.dat...
+         
+         BUILD: Compiling and Linking e:\vs_project\monitor\monitor directory
+         
+         Configuring OACR for 'root:x86chk' - <OACR on>
+         Compiling resources - drvversion.rc
+         Compiling - filemonitor.cpp
+         Compiling - tools.cpp
+         Compiling - generating code...
+         Linking Executable - objchk_win7_x86\i386\filemonitor.sys
+         BUILD: Finish time: Fri May 04 09:17:14 2018
+         BUILD: Done
+         
+         
+         
+             5 files compiled - 4 Warnings
+         
+             1 executable built
+         
+     1>已完成生成项目“E:\VS_Project\Monitor\Monitor\Monitor.vcxproj”(rebuild 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:03.31

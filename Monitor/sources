@@ -1,0 +1,11 @@
+
+TARGETNAME=FileMonitor
+TARGETPATH=obj
+TARGETTYPE=DRIVER
+TARGETLIBS= $(TARGETLIBS) \
+             $(IFSKIT_LIB_PATH)\fltMgr.lib 
+
+
+SOURCES=FileMonitor.cpp \
+		tools.cpp \
+        drvversion.rc

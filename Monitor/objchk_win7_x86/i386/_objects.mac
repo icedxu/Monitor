@@ -1,0 +1,18 @@
+
+
+386_OBJECTS=\
+ $(OBJ_PATH)\$O\filemonitor.obj \
+ $(OBJ_PATH)\$O\tools.obj \
+
+
+_RES_FILE=$(OBJ_PATH)\$O\drvversion.res
+
+
+
+# lowercased
+BASEDIR=d:\winddk\7600.16385.1
+OBJECT_ROOT=d:\winddk\7600.16385.1
+MAKEDIR_LOWERCASE=e:\vs_project\monitor\monitor
+OBJ_PATH=e:\vs_project\monitor\monitor
+CONCURRENT_MIDL=0
+CONCURRENT_MANIFEST_BUILD=0
