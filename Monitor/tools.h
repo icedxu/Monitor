@@ -26,6 +26,18 @@ extern "C" {
 #endif
 
 
+
+#define FAT_NTC_FCB               0x0502
+#define FAT_NTC_DCB               0x0503
+#define FAT_NTC_ROOT_DCB          0x0504
+#define NTFS_NTC_DCB              0x0703
+#define NTFS_NTC_ROOT_DCB         0x0704
+#define NTFS_NTC_FCB              0x0705
+
+
+
+
+
 /************************************************************************/
 /*                           定义常量                                 */
 /************************************************************************/
@@ -103,10 +115,6 @@ void FreeStrategy(PTYPE_KEY_PROCESS head);
 
 //判断进程名是否为该类型的机密进程
 BOOLEAN IsSecretProcess(PTYPE_KEY_PROCESS keyWord,CHAR *processName);
-
-
-
-
 
 
 /************************************************************************/

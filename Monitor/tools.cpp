@@ -78,209 +78,6 @@ INT UnicodeStringIndexOf(UNICODE_STRING *sour,UNICODE_STRING *val)
 }
 
 
-//
-///************************************************************************/
-///*读取文件加密信息 , 是不是已经加密？  2017.9.11 ctx是当前文件的句柄，keyWord是策略表                                                         */
-///************************************************************************/
-//
-//#pragma  LOCKEDCODE
-//NTSTATUS GetFileEncryptInfoToCtx(__inout PFLT_CALLBACK_DATA Data,
-//								  __in PCFLT_RELATED_OBJECTS FltObjects,
-//								  __inout PSTREAM_HANDLE_CONTEXT ctx)
-//{
-//	NTSTATUS status;
-//	PFLT_FILE_NAME_INFORMATION nameInfo = NULL;
-//
-//	//检查中断级
-//	if (KeGetCurrentIrql() >= DISPATCH_LEVEL)
-//	{
-//		return STATUS_UNSUCCESSFUL;
-//	}
-//
-//	//判断是否文件夹
-//	BOOLEAN isDir;	
-//	status=FltIsDirectory(FltObjects->FileObject,FltObjects->Instance,&isDir);
-//
-//	if (NT_SUCCESS(status))
-//	{
-//		//文件夹直接跳过
-//		if (isDir)
-//		{
-//			return status;
-//		}
-//		else
-//		{
-//			//获取文件名称
-//			status=FltGetFileNameInformation(Data,
-//				FLT_FILE_NAME_OPENED|FLT_FILE_NAME_QUERY_ALWAYS_ALLOW_CACHE_LOOKUP,
-//				&nameInfo);
-//
-//			if (NT_SUCCESS(status))
-//			{
-//				//获取当前文件路径
-//				FltParseFileNameInformation(nameInfo);
-//
-//				//判断该文件类型是否是加密类型，(策略表,文件名，当前文件的信息)ctx->keyWord文件类型
-//				BOOLEAN file_name = IsInKeyWordList( keyWord,
-//													 &(nameInfo->Name),
-//													 &(ctx->keyprocess));
-//				
-//				if(file_name)
-//				{
-//
-//					//获取文件信息
-//					FILE_STANDARD_INFORMATION fileInfo;
-//
-//					status = FltQueryInformationFile(FltObjects->Instance,
-//													Data->Iopb->TargetFileObject,
-//													&fileInfo,
-//													sizeof(FILE_STANDARD_INFORMATION),
-//													FileStandardInformation,
-//													NULL);
-//
-//				}
-//				else
-//				{
-//					//////////////DbgPrint("no a filt file\n");
-//				}
-//				
-//			}
-//			else
-//			{
-//			//////////////DbgPrint("can not read filename\n");
-//			}
-//		}
-//	}
-//	else
-//	{
-//		//////////////DbgPrint("test dir fail\n");
-//	}
-//	if (NULL!= nameInfo)
-//	{
-//		FltReleaseFileNameInformation(nameInfo);
-//	}
-//	return status;
-//}
-
-
-/************************************************************************/
-/*                         策略表操作                                    */
-/************************************************************************/
-//从字符串中构造一个策略表，返回表头
-/*
-字符串格式:“.txt=nopad.exe,TxtReader.exe,;.cad=*,;.jpg=ImageView.exe,explore.exe,;”
-*/
-
-//PTYPE_KEY_PROCESS GetStrategyFromString(CHAR *StrategyString)
-//{
-//	//return NULL;
-//	int stringLen=strlen(StrategyString);
-//	//行标志符
-//	CHAR l_end=';';
-//
-//
-//	//行的首偏移
-//	int lineStart=0;
-//	//行的尾偏移
-//	int lineEnd=-1;
-//	//行的分割符偏移
-//	int lineDiv=0;
-//
-//	//策略表首部
-//	TYPE_KEY_PROCESS keyword_head;
-//
-//
-//	keyword_head.next=NULL;
-//
-//	//解析策略串
-//	for(int i=0;i<stringLen;i++)
-//	{
-//		//////////////DbgPrint("start to file line end");
-//		//查找每个进程的结束标志
-//		if(StrategyString[i]==l_end)  
-//		{	
-//			//行首是上次的行尾加1
-//			lineStart=lineEnd+1;
-//			lineEnd=i;
-//
-//			//查找分割符
-//			for(lineDiv=lineStart;lineDiv<lineEnd;lineDiv++)
-//			{
-//				if(StrategyString[lineDiv]!=l_end)continue;
-//
-//				//读取关键字
-//				//分配空间
-//				PTYPE_KEY_PROCESS kw=(PTYPE_KEY_PROCESS)ExAllocatePoolWithTag( NonPagedPool,
-//					sizeof(TYPE_KEY_PROCESS),
-//					BUFFER_SWAP_TAG );
-//
-//				if (kw!=NULL)
-//				{
-//
-//					//进程连首部
-//					PROCESS_INFO proc_head;
-//					proc_head.next=NULL;
-//
-//					//////////////DbgPrint("start to fine proc div");
-//
-//					int pro_div_end=lineDiv;//进程分割结束
-//					int pro_div_start=pro_div_end;//进程分割开始
-//					//解析进程名
-//
-//					for (int j=lineDiv+1;j<lineEnd;j++)
-//					{
-//						//匹配到进程分割符
-//						if(StrategyString[j]!=pro_div)continue;
-//
-//						pro_div_start=pro_div_end+1;
-//						pro_div_end=j;
-//						//
-//						//读取进程名
-//						PPROCESS_INFO pi=(PPROCESS_INFO)ExAllocatePoolWithTag( NonPagedPool,
-//							sizeof(PROCESS_INFO),
-//							BUFFER_SWAP_TAG );
-//
-//						if(pi!=NULL)
-//						{
-//
-//							//插入到进程链表
-//							pi->next=proc_head.next;
-//							proc_head.next=pi;
-//							//
-//							RtlZeroMemory(pi->processName,PROCESS_NAME_LEN);
-//
-//
-//							//拷贝进程名称
-//							size_t proName_size=pro_div_end-pro_div_start;
-//							size=proName_size<PROCESS_NAME_LEN?proName_size:PROCESS_NAME_LEN;
-//
-//							RtlCopyMemory(pi->processName,&(StrategyString[pro_div_start]),size);
-//				
-//							DbgPrint("*******fine a process %s \n",pi->processName);
-//
-//							//关联到关键字
-//						}
-//
-//					}
-//
-//					//进程名解析结束
-//					//关联到关键字
-//					kw->processInfo=proc_head.next;
-//
-//				}
-//
-//			}
-//			//解析行结束
-//
-//		}
-//		//查找行结束
-//	}
-//	//解析结束
-//
-//	//返回关键字首部
-//	return keyword_head.next;
-//
-//}
 
 //释放进程链表
 void FreeProcessInfoList(PPROCESS_INFO head)
@@ -436,7 +233,7 @@ void cstr2wstr( const char *pcstr,wchar_t *pwstr , size_t len)
 
 
 
-/** 获取文件的路径，类型**/
+/** 获取文件的路径，类型，过滤文件夹（去掉）**/
 
 NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 	__in PCFLT_RELATED_OBJECTS FltObjects,
@@ -451,73 +248,50 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 	}
 	//判断是否文件夹
 	BOOLEAN isDir;	
-	status=FltIsDirectory(FltObjects->FileObject,FltObjects->Instance,&isDir);
+	status = FltIsDirectory(FltObjects->FileObject,FltObjects->Instance,&isDir);
+
 
 	if (NT_SUCCESS(status))
 	{
 		//文件夹直接跳过
 		if (isDir)
 		{
-			return status;
+			return STATUS_UNSUCCESSFUL;  //是文件夹直接返回失败
 		}
 		else
 		{
-			//获取文件名称
+			//获取文件名称FLT_FILE_NAME_OPENED 文件被打开才行
 			status=FltGetFileNameInformation(Data,
-				FLT_FILE_NAME_OPENED|FLT_FILE_NAME_QUERY_ALWAYS_ALLOW_CACHE_LOOKUP,
+				FLT_FILE_NAME_NORMALIZED|FLT_FILE_NAME_QUERY_ALWAYS_ALLOW_CACHE_LOOKUP,
 				&nameInfo);
 
 			if (NT_SUCCESS(status))
 			{
-				FltParseFileNameInformation(nameInfo);
-			    ctx->fileFullPath = nameInfo->Name;
-				ctx->fileStyle = nameInfo->Extension;
-				ctx->fileVolumeName = nameInfo->Volume;
-				ctx->fileName  = nameInfo->ParentDir;
+					 
+				status = FltParseFileNameInformation(nameInfo);
+				
+				if (NT_SUCCESS(status))
+				{
+					ctx->fileFullPath = nameInfo->Name;
+					ctx->fileStyle = nameInfo->Extension;
+					ctx->fileVolumeName = nameInfo->Volume;
+					ctx->fileName  = nameInfo->ParentDir;
+				}    
 			}
 		}
+
+		if (NULL!= nameInfo)
+		{
+			FltReleaseFileNameInformation(nameInfo);
+		}
 	}
-	if (NULL!= nameInfo)
-	{
-		FltReleaseFileNameInformation(nameInfo);
-	}
+	
 
 	return status;
 
 }
 
 
-
-
-//----------------------------------------------------------------------
-//
-//	GetCurrentTimeString
-//
-//	Get current time string. (format: %d-%02d-%02d %02d:%02d:%02d)
-//
-//	----------------------------------------------------------------------
-
-//PCHAR  GetCurrentTimeString()
-//{
-//	static CHAR  szTime[128];
-//	LARGE_INTEGER SystemTime;
-//	LARGE_INTEGER LocalTime;
-//	TIME_FIELDS  timeFiled;
-//
-//	KeQuerySystemTime(&SystemTime);
-//	ExSystemTimeToLocalTime(&SystemTime, &LocalTime);
-//	RtlTimeToTimeFields(&LocalTime, &timeFiled);
-//	sprintf(szTime, "%d-%02d-%02d %02d:%02d:%02d"
-//		, timeFiled.Year
-//		, timeFiled.Month
-//		, timeFiled.Day
-//		, timeFiled.Hour
-//		, timeFiled.Minute
-//		, timeFiled.Second
-//		);
-//
-//	return szTime;
-//}
 
 
  ULONG	GetTime()
@@ -559,6 +333,7 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 		NowFields.Minute,
 		NowFields.Second));*/
 }
+
 
 
 

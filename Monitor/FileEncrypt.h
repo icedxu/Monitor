@@ -92,7 +92,7 @@ typedef struct _STREAM_HANDLE_CONTEXT
 
 	UNICODE_STRING  fileVolumeName; //文件所在的卷名
 
-	UNICODE_STRING  fileStyle; //文件类型
+	UNICODE_STRING  fileStyle; //文件类型 
 
 } STREAM_HANDLE_CONTEXT,*PSTREAM_HANDLE_CONTEXT;
 
@@ -243,7 +243,7 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 	},
 
 	
-	/*{ IRP_MJ_WRITE,
+	{ IRP_MJ_WRITE,
 	0,
 	WritePre,  
 	WritePost
@@ -253,7 +253,7 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 	{ IRP_MJ_SET_INFORMATION,   
 	0,
 	SetInformationPre,
-	SetInformationPost },*/
+	SetInformationPost },
 
 	{ IRP_MJ_OPERATION_END }
 };

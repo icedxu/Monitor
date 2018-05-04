@@ -71,11 +71,11 @@ oacr invalidate root:x86chk /autocleanqueue
 1> .\filemonitor.cpp .\tools.cpp 
 1>filemonitor.cpp
 1>tools.cpp
-1>e:\vs_project\monitor\monitor\tools.cpp(539) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
+1>e:\vs_project\monitor\monitor\tools.cpp(313) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
 1>warnings in directory e:\vs_project\monitor\monitor
-1>e:\vs_project\monitor\monitor\tools.cpp(539) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
-1>e:\vs_project\monitor\monitor\tools.cpp(626) : warning C4129: '/' : unrecognized character escape sequence
-1>e:\vs_project\monitor\monitor\tools.cpp(626) : warning C4129: '/' : unrecognized character escape sequence
+1>e:\vs_project\monitor\monitor\tools.cpp(313) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
+1>e:\vs_project\monitor\monitor\tools.cpp(401) : warning C4129: '/' : unrecognized character escape sequence
+1>e:\vs_project\monitor\monitor\tools.cpp(401) : warning C4129: '/' : unrecognized character escape sequence
 1>Generating Code...
 1> D:\WINDDK\7600.16385.1\Bin\x86\oacr\oacrlink /out:e:\vs_project\monitor\monitor\objchk_win7_x86\i386\FileMonitor.sys /machine:ix86 @e:\vs_project\monitor\monitor\objchk_win7_x86\i386\lnk.rsp
 1>Microsoft (R) Incremental Linker Version 9.00.30729.207

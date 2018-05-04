@@ -168,7 +168,6 @@ CreatePre(
 }
 
 
-//2017.9.12
 #pragma  LOCKEDCODE
 FLT_POSTOP_CALLBACK_STATUS
 CreatePost(
@@ -192,20 +191,22 @@ CreatePost(
 		{ 	
 			/*新建文件*/
 			STREAM_HANDLE_CONTEXT temCtx;	
-			NTSTATUS  status;
 				status = GetFileInformation(Data,FltObjects,&temCtx);
 
 				if (NT_SUCCESS(status))
 				{
 					PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-					KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
+					KdPrint(("Newfile进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+
+
+					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
 					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
-
 					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
-					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	
+					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
 
-					ULONG Time = GetTime();
-					KdPrint(("%ld \n ",Time));
+					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+					/*	ULONG Time = GetTime();
+					KdPrint(("%ld \n ",Time));*/
 				} 
 		 
 		/*		CHAR *lp ;
@@ -255,23 +256,30 @@ FLT_POSTOP_CALLBACK_STATUS
 	UNREFERENCED_PARAMETER( Flags );
 	PFLT_IO_PARAMETER_BLOCK iopb = Data->Iopb;
 	FLT_POSTOP_CALLBACK_STATUS retValue = FLT_POSTOP_FINISHED_PROCESSING;
+	NTSTATUS status;
+	STREAM_HANDLE_CONTEXT temCtx;	
 	//检查中断级
 	if (KeGetCurrentIrql() >= DISPATCH_LEVEL)
 	{
 		return FLT_POSTOP_FINISHED_PROCESSING;
 	}
-	NTSTATUS status;
-	//检查中断级
-	if (KeGetCurrentIrql() >= DISPATCH_LEVEL)
-	{
-		return retValue; 
-	}
+
+	status = GetFileInformation(Data,FltObjects,&temCtx);
+	if (NT_SUCCESS(status))
+		{
+			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
+			KdPrint(("Write进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
 
 
-	//STREAM_HANDLE_CONTEXT temCtx;	
-	//GetFileInformation(Data,FltObjects,&temCtx,key_word_header,key);
-	//PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-	//KdPrint(("newfile 进程名:%s\n 文件类型:ctx->keyWord->keyWord = %s\n",procName,temCtx.keyprocess->processInfo));
+					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
+					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
+					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
+					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
+
+					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+					/*	ULONG Time = GetTime();
+					KdPrint(("%ld \n ",Time));*/
+		} 
 
 	return FLT_POSTOP_FINISHED_PROCESSING;
 }
@@ -299,7 +307,8 @@ SetInformationPre(
 	FLT_PREOP_CALLBACK_STATUS retValue = FLT_PREOP_SUCCESS_WITH_CALLBACK;
 	PFLT_IO_PARAMETER_BLOCK iopb = Data->Iopb;
 
-	STREAM_HANDLE_CONTEXT ctx;
+	STREAM_HANDLE_CONTEXT temCtx;
+	NTSTATUS status;
 
 	//检查中断级
 	if (KeGetCurrentIrql() >= DISPATCH_LEVEL)
@@ -308,23 +317,32 @@ SetInformationPre(
 	}
 
 	//获取文件信息
-
-/*
-		NTSTATUS status=GetFileEncryptInfoToCtx(Data,FltObjects,&ctx,key_word_header);
-
-		if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformation)
+	status = GetFileInformation(Data,FltObjects,&temCtx);
+	if (NT_SUCCESS(status))
 		{
-			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-				KdPrint(("newfile 进程名:%s\n 文件类型:ctx->keyWord->keyWord = %s\n",procName,ctx.keyprocess->processInfo));
-		}
+			if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformation)
+			{
+				PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
+			    KdPrint(("delete进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+			}
 
 
-		if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileRenameInformation)
-		{
-			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-			KdPrint(("newfile 进程名:%s\n 文件类型:ctx->keyWord->keyWord = %s\n",procName,ctx.keyprocess->processInfo));
-		}
-	*/
+			if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileRenameInformation)
+			{
+				PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
+				KdPrint(("rename进程 = %s,类型=%wZ,卷路径=%wZ\n ",procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+			}
+
+					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
+					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
+					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
+					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
+
+					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+					/*	ULONG Time = GetTime();
+					KdPrint(("%ld \n ",Time));*/
+		} 
+
 	return retValue;
 }
 
