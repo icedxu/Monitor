@@ -96,12 +96,45 @@ typedef struct _STREAM_HANDLE_CONTEXT
 
 } STREAM_HANDLE_CONTEXT,*PSTREAM_HANDLE_CONTEXT;
 
+//声明 API
+extern"C" __declspec(dllimport)UCHAR*PsGetProcessImageFileName(IN PEPROCESS Process); 
+extern"C" __declspec(dllimport)HANDLE PsGetProcessInheritedFromUniqueProcessId(IN PEPROCESS Process); 
 
 
+
+//根据进程 ID 返回进程 EPROCESS，失败返回 NULL
+PEPROCESS LookupProcess(HANDLE Pid);
+VOID EnumProcess(ULONG);
 
 /************************************************************************/
 /*                    通信口回调函数                                      */
 /************************************************************************/
+
+//枚举指定进程的线程
+VOID EnumThread(PEPROCESS Process);
+PETHREAD LookupThread(HANDLE Tid);
+
+
+VOID 
+	MyMiniFilterLoadImage( 
+	__in_opt PUNICODE_STRING FullImageName,
+	__in HANDLE ProcessId,
+	__in PIMAGE_INFO ImageInfo );
+
+
+VOID
+	MyMiniFilterProcessNotify(
+	IN HANDLE  ParentId,
+	IN HANDLE  ProcessId,
+	IN BOOLEAN  Create
+	);
+
+
+
+
+
+
+
 
 //连接回调
 NTSTATUS

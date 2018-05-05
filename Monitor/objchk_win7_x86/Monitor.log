@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018/5/4 20:33:22。
+﻿生成启动时间为 2018/5/5 22:36:54。
      1>项目“E:\VS_Project\Monitor\Monitor\Monitor.vcxproj”在节点 2 上(rebuild 个目标)。
      1>CoreClean:
          rmdir /s /q E:\VS_Project\Monitor\Monitor\\objchk_win7_x86
@@ -18,12 +18,11 @@
          
          BUILD: Computing Include file dependencies:
          
-         BUILD: Start time: Fri May 04 20:33:23 2018
+         BUILD: Start time: Sat May 05 22:36:56 2018
          BUILD: Examining e:\vs_project\monitor\monitor directory for files to compile.
          
              e:\vs_project\monitor\monitor 
          
-         Auto-cleaning queue for 'root:x86chk' (2 of 2 file(s) removed)
          Invalidating OACR warning log for 'root:x86chk'
          BUILD: Saving d:\winddk\7600.16385.1\build.dat...
          
@@ -35,12 +34,12 @@
          Compiling - tools.cpp
          Compiling - generating code...
          Linking Executable - objchk_win7_x86\i386\filemonitor.sys
-         BUILD: Finish time: Fri May 04 20:33:26 2018
+         BUILD: Finish time: Sat May 05 22:36:58 2018
          BUILD: Done
          
          
          
-             5 files compiled - 4 Warnings - 1,319 LPS
+             5 files compiled - 4 Warnings - 1,405 LPS
          
              1 executable built
          
@@ -48,4 +47,4 @@
 
 生成成功。
 
-已用时间 00:00:04.69
+已用时间 00:00:03.80

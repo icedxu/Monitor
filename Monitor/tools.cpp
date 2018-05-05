@@ -203,8 +203,6 @@ GetCurrentProcessName(ULONG ProcessNameOffset)
 		
        nameptr="";
     }
-
-	//KdPrind(("GetCurrentProcessName进程名 = %s\n",nameptr));
     return nameptr;
 }
 
@@ -337,8 +335,8 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
   /***判断是否是要过滤掉的进程名  icedxu_2018_5_4**/
  BOOLEAN  IsSecretProcess(CHAR  *processName)
  {
-	 //PCHAR name = ";System;svchost.exe;vmtoolsd.exe;explorer.exe;SearchProtocol;iexplore.exe;SearchIndexer;taskhost.exe;WmiApSrv.exe;";
-	 PCHAR name = "qwef;";
+	 PCHAR name = ";System;svchost.exe;vmtoolsd.exe;explorer.exe;SearchProtocol;iexplore.exe;SearchIndexer;taskhost.exe;WmiApSrv.exe;";
+	// PCHAR name = "qwef;";
 	if (strstr(name,processName) > 0)
 	{
 		return TRUE;
@@ -351,33 +349,43 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 
 
  //根据进程 ID 返回进程 EPROCESS，失败返回 NULL
- //PEPROCESS LookupProcess(HANDLE Pid)
- //{
-	// PEPROCESS eprocess = NULL;
-	// if (NT_SUCCESS(PsLookupProcessByProcessId(Pid, &eprocess))) 
-	//	 return eprocess;
-	// else
-	//	 return NULL;
- //}
+	 PEPROCESS LookupProcess(HANDLE Pid)
+ {
+	 PEPROCESS eprocess = NULL;
+	 if (NT_SUCCESS(PsLookupProcessByProcessId(Pid, &eprocess))) 
+		 return eprocess;
+	 else
+		 return NULL;
+ }
  //枚举进程
- //VOID EnumProcess()
- //{
-	// ULONG i = 0;
-	// PEPROCESS eproc = NULL;
-	// for (i = 4; i<262144; i = i + 4)
-	// {
-	//	 eproc = LookupProcess((HANDLE)i);
-	//	 if (eproc != NULL)
-	//	 {
-	//		 DbgPrint("EPROCESS = %p, PID = %ld, PPID = %ld, Name = %s\n", 
-	//			 eproc,
-	//			 (UINT32)PsGetProcessId(eproc),
-	//			 (UINT32)PsGetProcessInheritedFromUniqueProcessId(eproc),
-	//			 PsGetProcessImageFileName(eproc));
-	//		 ObDereferenceObject(eproc);
-	//	 }
-	// }
- //}
+	 VOID EnumProcess(ULONG processID)
+ {
+	 ULONG i = 0;
+	 PEPROCESS eproc = NULL;
+	 for (i = 4; i<262144; i = i + 4)
+	 {
+		 eproc = LookupProcess((HANDLE)i);
+		 if (eproc != NULL)
+		 {
+			if (processID == (UINT32)PsGetProcessId(eproc))
+			{
+				if ( !IsSecretProcess((PCHAR)PsGetProcessImageFileName(eproc)) )
+				{
+					DbgPrint("EPROCESS = %p, PID = %ld, PPID = %ld, Name = %s\n", 
+						eproc,
+						(UINT32)PsGetProcessId(eproc),
+						(UINT32)PsGetProcessInheritedFromUniqueProcessId(eproc),
+						PsGetProcessImageFileName(eproc));
+					ObDereferenceObject(eproc);
+				}
+				  
+				
+			}
+			 
+			
+		 }
+	 }
+ }
 
 
  //typedef NTSTATUS (*QUERY_INFO_PROCESS) (

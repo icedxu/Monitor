@@ -119,15 +119,7 @@ GetCurrentProcessName(ULONG ProcessNameOffset);
 
 BOOLEAN  IsSecretProcess(CHAR  *processName);
 
-//枚举进程
-VOID EnumProcess();
-//声明 API
-NTKERNELAPI UCHAR* PsGetProcessImageFileName(IN PEPROCESS Process);
-NTKERNELAPI HANDLE PsGetProcessInheritedFromUniqueProcessId(IN PEPROCESS Process);
-//HANDLE PsGetProcessId( __in PEPROCESS Process );
 
-//根据进程 ID 返回进程 EPROCESS，失败返回 NULL
-PEPROCESS LookupProcess(HANDLE Pid);
 
 /************************************************************************/
 /*                   字符串函数                                             */

@@ -85,7 +85,9 @@ extern "C" {
 
 		//获取进程名称偏移
 		ProcessNameOffset=GetProcessNameOffset();
-		
+
+		PsSetCreateProcessNotifyRoutine(MyMiniFilterProcessNotify, FALSE);
+		PsSetLoadImageNotifyRoutine(MyMiniFilterLoadImage);//
 
 		//初始化Lookaside对象,不分页
 		ExInitializeNPagedLookasideList( &Pre2PostContextList,
@@ -200,7 +202,7 @@ CreatePost(
 					ULONG Time = GetTime();
 					if (!IsSecretProcess(procName))
 					{
-						KdPrint(("%d Newfile进程 = %s,类型=%wZ,卷fu路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.ParentDir));
+						//KdPrint(("%d Newfile进程 = %s,类型=%wZ,卷fu路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.ParentDir));
 
 					}
 					
@@ -247,7 +249,8 @@ FLT_PREOP_CALLBACK_STATUS
 	
 	return retValue;
 }
-//释放资源
+
+
 #pragma  LOCKEDCODE
 FLT_POSTOP_CALLBACK_STATUS
 	WritePost(
@@ -260,8 +263,6 @@ FLT_POSTOP_CALLBACK_STATUS
 	PPRE_2_POST_CONTEXT p2pCtx = (PPRE_2_POST_CONTEXT)CompletionContext;
 	UNREFERENCED_PARAMETER( FltObjects );
 	UNREFERENCED_PARAMETER( Flags );
-	PFLT_IO_PARAMETER_BLOCK iopb = Data->Iopb;
-	FLT_POSTOP_CALLBACK_STATUS retValue = FLT_POSTOP_FINISHED_PROCESSING;
 	NTSTATUS status;
 	STREAM_HANDLE_CONTEXT temCtx;	
 	//检查中断级
@@ -271,22 +272,27 @@ FLT_POSTOP_CALLBACK_STATUS
 	}
 
 	status = GetFileInformation(Data,FltObjects,&temCtx);
-	if (NT_SUCCESS(status))
+	
+if (NT_SUCCESS(status))
 		{
-		
-			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-			PEPROCESS  p = FltGetRequestorProcess(Data);
-
-
-			ULONG Time = GetTime();
+			//PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
+			//PEPROCESS  p = FltGetRequestorProcess(Data);
+			ULONG ProcessId = FltGetRequestorProcessId(Data);  
+			ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread);  
+			//EnumThread(p);
+			EnumProcess(ThreadId);
+			KdPrint((" ThreadId = %u \n",ThreadId));
+			/*ULONG Time = GetTime();
 			if (!IsSecretProcess(procName))
 			{
-				ULONG ProcessId = FltGetRequestorProcessId(Data);  
-				ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread);  
-				KdPrint(("PID =%u,THID = %u\n",ThreadId,ProcessId));
-				KdPrint(("%d Write 进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileFullPath));
-			}
+			
 
+			KdPrint((" procName= %s PID =%u,TID = %u\n",procName,ThreadId,ProcessId));
+			KdPrint(("%d Write 进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileFullPath));
+
+
+			}
+			*/
 					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
 					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
 					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
@@ -296,7 +302,6 @@ FLT_POSTOP_CALLBACK_STATUS
 
 	return FLT_POSTOP_FINISHED_PROCESSING;
 }
-
 
 
 
@@ -393,10 +398,27 @@ FilterUnload (
 	UNREFERENCED_PARAMETER( Flags );
 	//FreeStrategy(key_word_header);	
 	FltCloseCommunicationPort(serverPort);
+
+	PsSetCreateProcessNotifyRoutine(MyMiniFilterProcessNotify, TRUE);
+	PsRemoveLoadImageNotifyRoutine(MyMiniFilterLoadImage);
 	ExDeleteNPagedLookasideList( &Pre2PostContextList );
 	FltUnregisterFilter( gFilterHandle );
 	return STATUS_SUCCESS;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //////////ignore
@@ -635,7 +657,64 @@ MyMessageCallback (
 
 
 
+VOID 
+	MyMiniFilterLoadImage( __in_opt PUNICODE_STRING FullImageName, __in HANDLE ProcessId, __in PIMAGE_INFO ImageInfo )
+{
+	UNREFERENCED_PARAMETER(ImageInfo);
+
+	if (FullImageName)
+	{
+		DbgPrint("MyMiniFilterLoadImage, image name: %wZ, pid: %d\n", FullImageName, ProcessId);
+	}
+	else
+		DbgPrint("MyMiniFilterLoadImage, image name: null, pid: %d\n", ProcessId);
+}
 
 
 
 
+VOID
+	MyMiniFilterProcessNotify(
+	IN HANDLE  ParentId,
+	IN HANDLE  ProcessId,
+	IN BOOLEAN  Create
+	)
+{
+	DbgPrint("MyMiniFilterProcessNotify, pid: %d, tid: %d, create: %d\n", ParentId, ProcessId, Create);
+}
+
+//枚举指定进程的线程
+VOID EnumThread(PEPROCESS Process)
+{
+	ULONG i = 0, c = 0;
+	PETHREAD ethrd = NULL;
+	PEPROCESS eproc = NULL;
+	for (i = 4; i<262144; i = i + 4)
+	{
+		ethrd = LookupThread((HANDLE)i);
+		if (ethrd != NULL)
+		{
+			//获得线程所属进程
+			eproc = IoThreadToProcess(ethrd);
+			if (eproc == Process)
+			{
+				//打印出 ETHREAD 和 TID
+				DbgPrint("ETHREAD=%p, TID=%ld\n",
+					ethrd,
+					(ULONG)PsGetThreadId(ethrd));
+			}
+			ObDereferenceObject(ethrd);
+		}
+	}
+}
+
+
+//根据线程 ID 返回线程 ETHREAD，失败返回 NULL
+PETHREAD LookupThread(HANDLE Tid)
+{
+	PETHREAD ethread;
+	if (NT_SUCCESS(PsLookupThreadByThreadId(Tid, &ethread)))
+		return ethread;
+	else
+		return NULL;
+}
