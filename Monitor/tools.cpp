@@ -270,10 +270,27 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 				
 				if (NT_SUCCESS(status))
 				{
+					int i = 1;
+					int count = 1;
+			
+					PWCHAR  p = nameInfo->ParentDir.Buffer;
+					/**截取父目录中的第一级目录  2018_5_6*/
+					while (p[i] != '\\')
+					{
+						//KdPrint(("count = %d ,p[i] = %c\n",count,p[i]));
+						count++;
+						i++;
+					}
+
 					ctx->fileFullPath = nameInfo->Name;
 					ctx->fileStyle = nameInfo->Extension;
 					ctx->fileVolumeName = nameInfo->Volume;
 					ctx->ParentDir  = nameInfo->ParentDir;
+						/**截取父目录中的第一级目录与卷目录合并  2018_5_6*/
+					ctx->fileVolumeName.Length =  ctx->fileVolumeName.Length +2*count;
+					ctx->fileVolumeName.MaximumLength =  ctx->fileVolumeName.MaximumLength +2*count;
+					//KdPrint(("V = %wZ,length = %d,mAxL = %d ,count = %d\n",&nameInfo->Volume,nameInfo->Volume.Length,nameInfo->Volume.MaximumLength,count));
+				   // KdPrint(("Volume = %wZ,length = %d,mAxL = %d \n",&ctx->fileVolumeName,ctx->fileVolumeName.Length,ctx->fileVolumeName.MaximumLength));
 				
 				}    
 			}
@@ -371,18 +388,14 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 			{
 				if ( !IsSecretProcess((PCHAR)PsGetProcessImageFileName(eproc)) )
 				{
-					DbgPrint("EPROCESS = %p, PID = %ld, PPID = %ld, Name = %s\n", 
+				    	DbgPrint("EPROCESS = %p, PID = %ld, PPID = %ld, Name = %s\n", 
 						eproc,
 						(UINT32)PsGetProcessId(eproc),
 						(UINT32)PsGetProcessInheritedFromUniqueProcessId(eproc),
 						PsGetProcessImageFileName(eproc));
-					ObDereferenceObject(eproc);
+					    ObDereferenceObject(eproc);
 				}
-				  
-				
-			}
-			 
-			
+			}			
 		 }
 	 }
  }

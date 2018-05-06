@@ -268,11 +268,11 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 
 
 CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
-	{ IRP_MJ_CREATE,
-	0,
-	NULL,         //CreatePre  可不看
-	CreatePost 
-	},
+	//{ IRP_MJ_CREATE,
+	//0,
+	//NULL,         //CreatePre  可不看
+	//CreatePost 
+	//},
 
 	
 	{ IRP_MJ_WRITE,
@@ -282,10 +282,10 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 	},
 
 
-	{ IRP_MJ_SET_INFORMATION,   
-	0,
-	SetInformationPre,
-	SetInformationPost },
+	//{ IRP_MJ_SET_INFORMATION,   
+	//0,
+	//SetInformationPre,
+	//SetInformationPost },
 
 	{ IRP_MJ_OPERATION_END }
 };

@@ -276,12 +276,12 @@ FLT_POSTOP_CALLBACK_STATUS
 if (NT_SUCCESS(status))
 		{
 			//PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-			//PEPROCESS  p = FltGetRequestorProcess(Data);
+			PEPROCESS  p = FltGetRequestorProcess(Data);
 			ULONG ProcessId = FltGetRequestorProcessId(Data);  
 			ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread);  
-			//EnumThread(p);
-			EnumProcess(ThreadId);
-			KdPrint((" ThreadId = %u \n",ThreadId));
+			
+		//	EnumProcess(ThreadId);
+		//	KdPrint((" ThreadId = %u \n",ThreadId));
 			/*ULONG Time = GetTime();
 			if (!IsSecretProcess(procName))
 			{
@@ -292,8 +292,8 @@ if (NT_SUCCESS(status))
 
 
 			}
-			*/
-					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
+			*//*
+					KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
 					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
 					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
 					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
@@ -664,10 +664,10 @@ VOID
 
 	if (FullImageName)
 	{
-		DbgPrint("MyMiniFilterLoadImage, image name: %wZ, pid: %d\n", FullImageName, ProcessId);
+		//DbgPrint("MyMiniFilterLoadImage, image name: %wZ, pid: %d\n", FullImageName, ProcessId);
 	}
-	else
-		DbgPrint("MyMiniFilterLoadImage, image name: null, pid: %d\n", ProcessId);
+//	else
+		//DbgPrint("MyMiniFilterLoadImage, image name: null, pid: %d\n", ProcessId);
 }
 
 
@@ -680,7 +680,7 @@ VOID
 	IN BOOLEAN  Create
 	)
 {
-	DbgPrint("MyMiniFilterProcessNotify, pid: %d, tid: %d, create: %d\n", ParentId, ProcessId, Create);
+	//DbgPrint("MyMiniFilterProcessNotify, pid: %d, tid: %d, create: %d\n", ParentId, ProcessId, Create);
 }
 
 //枚举指定进程的线程
