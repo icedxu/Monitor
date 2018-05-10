@@ -22,6 +22,21 @@
 #define PRE_2_POST_TAG      'LASI'
 #define STREAM_HANDLE_CONTEXT_TAG  'shBS'
 
+
+
+
+
+
+
+//minifilter ¾ä±ú
+extern  PFLT_FILTER gFilterHandle;
+extern  HANDLE  handle;
+
+
+
+
+
+
 /*************************************************************************
     Local structures
 *************************************************************************/

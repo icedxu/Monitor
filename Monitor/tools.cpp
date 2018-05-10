@@ -633,3 +633,159 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 		 return ;
 	 }
  }
+
+
+
+
+
+
+ PFLT_FILTER gFilterHandle;
+ HANDLE  handle;
+
+ VOID writeLog(__inout PFLT_CALLBACK_DATA Data,
+	 __in PCFLT_RELATED_OBJECTS FltObjects,
+	 __in PVOID CompletionContext)
+ {
+	 PUNICODE_STRING  tmpLog;
+	 NTSTATUS status = STATUS_SUCCESS;
+	 OBJECT_ATTRIBUTES objectAttributes;
+	 UNICODE_STRING fileName;
+	 IO_STATUS_BLOCK ioStatus;
+	 PFLT_INSTANCE Instance = NULL;
+	 //初始化UNICODE_STRING字符串
+	 RtlInitUnicodeString( &fileName, 
+		 L"\\??\\C:\\2.log");
+
+	 InitializeObjectAttributes(
+		 &objectAttributes,
+		 &fileName,
+		 OBJ_KERNEL_HANDLE | OBJ_CASE_INSENSITIVE,
+		 NULL,
+		 NULL );
+
+	 status = FltCreateFile( FltObjects->Filter,
+		 FltObjects->Instance,
+		 &handle,
+		 FILE_ALL_ACCESS,
+		 &objectAttributes,
+		 &ioStatus,
+		 (PLARGE_INTEGER) NULL,
+		 FILE_ATTRIBUTE_NORMAL,
+		 FILE_SHARE_WRITE,
+		 FILE_OPEN_IF,   // ulong  createdisposition
+		 FILE_NON_DIRECTORY_FILE,   
+		 NULL,
+		 NULL,
+		 IO_IGNORE_SHARE_ACCESS_CHECK );
+
+	 if (NT_SUCCESS(status))
+	 {
+		 KdPrint(("open file successfully.\n"));
+		/* PVOID fileObject = NULL;
+		  status = ObReferenceObjectByHandle(
+		 handle,
+		 FILE_ALL_ACCESS,
+		 NULL,
+		 KernelMode,
+		 &fileObject,
+		 NULL);	*/
+		 LARGE_INTEGER offset;
+		 offset.QuadPart=0;
+		 PVOID buff;
+		 ULONG buffLen;
+		 CHAR *p;
+		 p="niaho\r\n";
+		 buffLen = strlen(p);
+		 buff = ExAllocatePool(NonPagedPool,buffLen);
+		 if(buff==NULL)
+		 {
+			 DbgPrint("no enough memoy");
+			// return STATUS_UNSUCCESSFUL;
+			 return ;
+		 }
+		 RtlZeroMemory(buff,buffLen);
+		 RtlCopyMemory(buff,p ,strlen(p));
+		 status = FltWriteFile(
+			 FltObjects->Instance,
+			 FltObjects->FileObject,
+			 &offset,  //ByteOffset
+			 buffLen   , //Length
+			 "nihao", //buffer
+			 FLTFL_IO_OPERATION_NON_CACHED, //flags
+			 NULL,//ByteWritten
+			 NULL,//CallbackRoutine
+			 NULL);  //CallbackContext
+
+		 if (!NT_SUCCESS(status))
+		 {
+			 DbgPrint("fail to write %08x",status);
+		 }
+		 ExFreePool(buff);
+
+
+	 }
+	 if (handle != NULL)
+	 {
+		 // FltClose(handle);
+		 ZwClose(handle);
+	 }
+
+	 return ;
+ }
+
+
+
+ VOID StartThread()
+ {
+    NTSTATUS status = STATUS_SUCCESS;
+	HANDLE   hThread = NULL;
+	KeInitializeEvent(&s_Event, SynchronizationEvent, FALSE);
+	status = PsCreateSystemThread(&hThread, //创建新线程
+		   (ACCESS_MASK)THREAD_ALL_ACCESS,
+		   NULL,
+		   NULL,//NtCurrentProcess(),线程所在地址空间的进程的handle
+		   NULL,
+		   (PKSTART_ROUTINE)ThreadProc,
+		   NULL);  //PVOID       StartContext   对应ThreadProc中的参数
+
+	if (!NT_SUCCESS(status))
+	{
+		KdPrint(("创建失败 \n"));
+		ZwClose(hThread);
+		return ;
+	}
+	KdPrint(("创建成功 \n"));
+
+	ZwClose(hThread);
+	KeWaitForSingleObject(&s_Event, Executive, KernelMode, 0, 0);
+	KdPrint(("线程启动函数返回!!\n"));
+	return ;
+ }
+
+ VOID  ThreadProc()  
+ {  
+	 DbgPrint("CreateThread Successfully");    
+	 //创建线程必须用函数PsTerminateSystemThread强制线程结束。否则该线程是无法自动退出的。
+	 //PUNICODE_STRING str = (PUNICODE_STRING)Context;
+	 LARGE_INTEGER Interval;
+	 LONG Msec = 3000;
+
+	 //打印字符串
+	// KdPrint(("进入线程函数 : %wZ\n", str));
+
+	 //Msec若为1000,则 睡眠的时间为： 1000 * 100 ns * 10 *1000 =1s 
+	// Interval.QuadPart = DELAY_ONE_MILLISECOND;
+	// Interval.QuadPart *= Msec;
+
+	 //GetTime();
+	// GetTime();
+	// KeDelayExecutionThread(KernelMode, 0, &Interval);
+	// GetTime();
+
+	 KdPrint(("线程函数结束\n"));
+	 //设置事件
+	 KeSetEvent(&s_Event, 0, TRUE);
+	 //结束自己
+	 PsTerminateSystemThread(STATUS_SUCCESS);   
+	 return ;
+ }  

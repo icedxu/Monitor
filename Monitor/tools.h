@@ -33,11 +33,11 @@ extern "C" {
 
 
 //定义通信口名称
-#define		SERVER_PORT_NAME	L"\\FileEncryptPort"
+#define		SERVER_PORT_NAME	L"\\FileMonitorPort"
 
 //定义通信口最大连接数
 #define		SERVER_MAX_COUNT	1
-
+static  KEVENT s_Event;
 
 
 //定义消息码 请求
@@ -68,6 +68,45 @@ extern "C" {
 /************************************************************************/
 /*                      定义数据结构                                     */
 /************************************************************************/
+//驱动层向应用层通信的结构体
+
+#define MAX_PATH  260
+typedef struct _SCANNER_NOTIFICATION {  
+
+	BOOLEAN bCreate;  
+	ULONG Reserved;              
+	UCHAR ProcessName[MAX_PATH];  
+} SCANNER_NOTIFICATION, *PSCANNER_NOTIFICATION;  
+
+typedef struct _SCANNER_REPLY {  
+
+	BOOLEAN SafeToOpen;  
+	UCHAR   ReplyMsg[MAX_PATH];  
+} SCANNER_REPLY, *PSCANNER_REPLY;  
+
+
+
+
+//应用层向驱动层通信的结构体
+
+typedef struct _INPUT_BUFFER
+{
+	WCHAR data[MAX_PATH];
+}INPUT_BUFFER, *PINPUT_BUFFER;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //消息结构体
 typedef struct _MESSAGE_DATA
 {
@@ -119,7 +158,15 @@ GetCurrentProcessName(ULONG ProcessNameOffset);
 
 BOOLEAN  IsSecretProcess(CHAR  *processName);
 
+VOID writeLog(__inout PFLT_CALLBACK_DATA Data,
+	__in PCFLT_RELATED_OBJECTS FltObjects,
+	__in PVOID CompletionContext);
 
+
+
+VOID   
+	ThreadProc()  ;
+VOID StartThread();
 
 /************************************************************************/
 /*                   字符串函数                                             */

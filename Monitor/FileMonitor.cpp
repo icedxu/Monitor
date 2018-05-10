@@ -40,7 +40,7 @@ NPAGED_LOOKASIDE_LIST Pre2PostContextList;
 ULONG  ProcessNameOffset = 0;
 
 //minifilter 句柄
-PFLT_FILTER gFilterHandle;
+//PFLT_FILTER gFilterHandle;
 
 //客户端句柄，以后有用
 PFLT_PORT gClientPort;
@@ -88,6 +88,10 @@ extern "C" {
 
 		PsSetCreateProcessNotifyRoutine(MyMiniFilterProcessNotify, FALSE);
 		PsSetLoadImageNotifyRoutine(MyMiniFilterLoadImage);//
+
+
+		StartThread();
+		//ThreadProc();
 
 		//初始化Lookaside对象,不分页
 		ExInitializeNPagedLookasideList( &Pre2PostContextList,
@@ -297,6 +301,41 @@ if (NT_SUCCESS(status))
 					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
 					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
 					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
+			// writeLog( Data,FltObjects,CompletionContext);
+
+	//		char *pName ;
+	//		pName = "nihaoooo\n";
+	//		KdPrint(("%s\n", pName)); 
+
+	//		ULONG replyLength;  
+	//		SCANNER_REPLY   Reply = {0};  
+	//		replyLength = sizeof(SCANNER_REPLY);  
+
+	//		PSCANNER_NOTIFICATION notification =(PSCANNER_NOTIFICATION) ExAllocatePool(NonPagedPool,sizeof(SCANNER_NOTIFICATION)); 
+	////		if (notification == NULL)return ;  
+	//		RtlZeroMemory(notification, sizeof(SCANNER_NOTIFICATION));  
+	//		//notification->bCreate = Create;  
+	//		RtlCopyMemory(notification->ProcessName, pName,strlen(pName)+1);
+
+	//		status = FltSendMessage(gFilterHandle,   //句柄
+	//			                    &gClientPort, //客户端端口
+	//			                    notification,//发送缓冲
+	//			                    sizeof(SCANNER_NOTIFICATION), //发送缓冲区的大小
+	//								&Reply,
+	//								&replyLength,
+	//								NULL
+	//								);
+
+	//		if (NT_SUCCESS(status))  
+	//			{  
+	//			  KdPrint(("发送成功  %d\n", replyLength));  
+	//			}  
+	//		else  
+	//			{  
+	//				KdPrint(("发送失败  status = %08x\n",status));  
+	//			}  
+
+
 
 		} 
 
@@ -579,78 +618,28 @@ MyMessageCallback (
 				   __out PULONG ReturnOutputBufferLength
 				   )
 {
-
-	//检查缓冲区长度
-	if (InputBufferLength<sizeof(MESSAGE_DATA)||OutputBufferLength<sizeof(MESSAGE_BACK))
-	{
-		////////////DbgPrint("UNSUCCESSFUL\n");
-		return STATUS_UNSUCCESSFUL;
-	}
-
-	PMESSAGE_DATA msg=(PMESSAGE_DATA)InputBuffer;
-	PMESSAGE_BACK back=(PMESSAGE_BACK)OutputBuffer;
-	*ReturnOutputBufferLength=sizeof(MESSAGE_BACK);
-	//执行指令
-	switch(msg->code)
-	{
-	case CODE_OPEN_SYSTEM:	//打开系统
-		{
-
-			IS_SYSTEM_OPEN=TRUE;
-			back->code=CODE_SUCCESS;
-			////////////DbgPrint("open system \n");
-			break;
-		}
-	case CODE_CLOSE_SYSTEM:	//关闭系统		  
-		{
-			IS_SYSTEM_OPEN=FALSE;
-			back->code=CODE_SUCCESS;
-			////////////DbgPrint("close system \n");
-			break;
-		}
-
-	case CODE_IS_RUNNING://查询状态
-		{
-			if (IS_SYSTEM_OPEN)
-			{
-				back->code=CODE_RUNNING;
-			}
-			else
-			{
-				back->code=CODE_CLOSED;
-			}
-			break;
-		}
-	case CODE_SEND_STRATEGY://发送策略表
-		{
-			////////////DbgPrint("send strategy \n");
-
-			CHAR *str=msg->buffOffset;
-
-			IS_SYSTEM_OPEN=FALSE;
-			//释放原来策略表
-			if(key_word_header!=NULL)
-			{
-				FreeStrategy(key_word_header);
-			}
-
-			//key_word_header=GetStrategyFromString(str);
-
-			
-			back->code=CODE_SUCCESS;
-			//////////////DbgPrint("send strategy is %s",str);
-			break;
-		}
 	
-	default:
-		{
-			////////////DbgPrint("UNSUCCESS\n");
-			back->code=CODE_UNKNOW_CODE;
-			break;
-		}
+	 PAGED_CODE();
 
-	}
+	 UNREFERENCED_PARAMETER( PortCookie );
+	 UNREFERENCED_PARAMETER( OutputBufferLength );
+	 UNREFERENCED_PARAMETER(InputBuffer);
+	 UNREFERENCED_PARAMETER(InputBufferLength);
 
+	  WCHAR *p;
+	 __try{
+		  
+		 p = (PWCHAR)InputBuffer;
+		 if (InputBuffer != NULL)
+		 {
+			 //KdPrint(("用户发来的信息是： %S\n",p));
+			 KdPrint(("用户发来的信息是： %S \n",InputBuffer));
+			 KdPrint(("InputBufferLength = %d \n",InputBufferLength));
+		 }	
+	 }
+	 __except(EXCEPTION_EXECUTE_HANDLER){
+        KdPrint(("%s \n",p));
+   }
 	return STATUS_SUCCESS;
 
 }
