@@ -21,6 +21,7 @@ extern "C" {
 }; // extern "C"
 
 #include "FileEncrypt.h"
+#include "ntstrsafe.h"
 #include <stdarg.h>
 #endif
 
@@ -32,12 +33,19 @@ extern "C" {
 /************************************************************************/
 
 
+
+
 //定义通信口名称
 #define		SERVER_PORT_NAME	L"\\FileMonitorPort"
 
 //定义通信口最大连接数
 #define		SERVER_MAX_COUNT	1
 static  KEVENT s_Event;
+
+
+#define  DELAY_ONE_MICROSECOND  (-10)
+#define  DELAY_ONE_MILLISECOND (DELAY_ONE_MICROSECOND*1000)
+#define  DELAY_ONE_MILLISECOND (DELAY_ONE_MICROSECOND*1000)
 
 
 //定义消息码 请求
@@ -63,6 +71,8 @@ static  KEVENT s_Event;
 #define		CODE_RUNNING		0x0009	//系统运行
 
 #define		CODE_CLOSED			0x000a	//系统停止
+
+#define     BUFFERSIZE 512
 
 
 /************************************************************************/
@@ -129,8 +139,8 @@ typedef struct _MESSAGE_BACK
 
 
 PCHAR  GetCurrentTimeString();
-
-
+BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[]);
+BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length);
 ULONG	GetTime();
  VOID DbgKeLog(PCHAR lpszLog);
 
@@ -140,7 +150,7 @@ ULONG	GetTime();
 //释放一个策略表
 void FreeStrategy(PTYPE_KEY_PROCESS head);
 
-
+ BOOLEAN IntegerToChar(ULONG pTime ,CHAR *T);
 //判断进程名是否为该类型的机密进程
 BOOLEAN IsSecretProcess(PTYPE_KEY_PROCESS keyWord,CHAR *processName);
 
@@ -164,8 +174,8 @@ VOID writeLog(__inout PFLT_CALLBACK_DATA Data,
 
 
 
-VOID   
-	ThreadProc()  ;
+//VOID   ThreadProc()  ;
+ VOID  ThreadProc(IN PVOID pContext)  ;
 VOID StartThread();
 
 /************************************************************************/

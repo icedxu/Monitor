@@ -9,6 +9,7 @@
 
 #include "drvcommon.h"
 #include "drvversion.h"
+#include "ntstrsafe.h"
 
 
 
@@ -31,8 +32,27 @@
 //minifilter 句柄
 extern  PFLT_FILTER gFilterHandle;
 extern  HANDLE  handle;
+//客户端句柄，以后有用
+extern  PFLT_PORT gClientPort;
+
+//同步事件对象  
+extern PRKEVENT g_pEventObject;  
+//句柄信息  
+extern  OBJECT_HANDLE_INFORMATION g_ObjectHandleInfo;  
 
 
+
+
+extern LIST_ENTRY HidePathListHeader;
+extern KSPIN_LOCK HidePathListLock;
+#define _CMD_PATH 256
+
+
+typedef struct _HIDE_PATH_LIST
+{
+	LIST_ENTRY listNode;
+	CHAR xxPath[_CMD_PATH];
+}LOG_LIST,*PLOG_LIST;
 
 
 
@@ -42,7 +62,7 @@ extern  HANDLE  handle;
 *************************************************************************/
 
 /************************************************************************/
-/* 加密策略表结构定义                                                    */
+/* 加密策略表结构定义                                                     */
 /************************************************************************/
 //定义进程信息链表
 #define PROCESS_NAME_LEN      32
@@ -297,10 +317,10 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 	},
 
 
-	//{ IRP_MJ_SET_INFORMATION,   
-	//0,
-	//SetInformationPre,
-	//SetInformationPost },
+	{ IRP_MJ_SET_INFORMATION,   
+	0,
+	SetInformationPre,
+	SetInformationPost },
 
 	{ IRP_MJ_OPERATION_END }
 };

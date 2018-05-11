@@ -70,16 +70,175 @@ oacr invalidate root:x86chk /autocleanqueue
 1> /FID:\WINDDK\7600.16385.1\inc\api\warning.h
 1> .\filemonitor.cpp .\tools.cpp 
 1>filemonitor.cpp
-1>tools.cpp
-1>e:\vs_project\monitor\monitor\tools.cpp(329) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(268) : warning C4995: 'scanf': name was marked as #pragma deprecated
 1>warnings in directory e:\vs_project\monitor\monitor
-1>e:\vs_project\monitor\monitor\tools.cpp(329) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
-1>e:\vs_project\monitor\monitor\tools.cpp(588) : warning C4129: '/' : unrecognized character escape sequence
-1>e:\vs_project\monitor\monitor\tools.cpp(588) : warning C4129: '/' : unrecognized character escape sequence
-1>e:\vs_project\monitor\monitor\tools.cpp(699) : warning C4996: 'ExAllocatePool': was declared deprecated
-1>e:\vs_project\monitor\monitor\tools.cpp(699) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(268) : warning C4995: 'scanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(284) : warning C4995: 'sscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(284) : warning C4995: 'sscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(290) : warning C4995: '_snscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(290) : warning C4995: '_snscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_snprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_snprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_vsnprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_vsnprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'sprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'sprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'vsprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'vsprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(416) : warning C4995: 'swprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(416) : warning C4995: 'swprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(417) : warning C4995: 'vswprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(417) : warning C4995: 'vswprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_snwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_snwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_vsnwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_vsnwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(508) : warning C4995: 'swscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(508) : warning C4995: 'swscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(514) : warning C4995: '_snwscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(514) : warning C4995: '_snwscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(518) : warning C4995: 'wscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(518) : warning C4995: 'wscanf': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(237) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(237) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(237) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(237) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(239) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(239) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(239) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(239) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(240) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(241) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(241) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(241) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(241) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(241) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(241) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(337) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(338) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(339) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(339) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(339) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(339) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(339) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(339) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(343) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(343) : warning C4996: 'ExAllocatePool': was declared deprecated
+1> d:\winddk\7600.16385.1\inc\ddk\wdm.h(16147) : see declaration of 'ExAllocatePool'
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(493) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(494) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(495) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(495) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(495) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(495) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(495) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(495) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(503) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(503) : warning C4996: 'ExAllocatePool': was declared deprecated
+1> d:\winddk\7600.16385.1\inc\ddk\wdm.h(16147) : see declaration of 'ExAllocatePool'
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(540) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(541) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>tools.cpp
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(268) : warning C4995: 'scanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(268) : warning C4995: 'scanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(284) : warning C4995: 'sscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(284) : warning C4995: 'sscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(290) : warning C4995: '_snscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(290) : warning C4995: '_snscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_snprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_snprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_vsnprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(316) : warning C4995: '_vsnprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'sprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'sprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'vsprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(322) : warning C4995: 'vsprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(416) : warning C4995: 'swprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(416) : warning C4995: 'swprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(417) : warning C4995: 'vswprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(417) : warning C4995: 'vswprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_snwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_snwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_vsnwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(428) : warning C4995: '_vsnwprintf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(508) : warning C4995: 'swscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(508) : warning C4995: 'swscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(514) : warning C4995: '_snwscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(514) : warning C4995: '_snwscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(518) : warning C4995: 'wscanf': name was marked as #pragma deprecated
+1>d:\winddk\7600.16385.1\inc\crt\stdio.h(518) : warning C4995: 'wscanf': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(346) : warning C4995: 'strcpy': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(346) : warning C4995: 'strcpy': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(372) : warning C4995: 'strncpy': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(372) : warning C4995: 'strncpy': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(407) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
+1>e:\vs_project\monitor\monitor\tools.cpp(407) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
+1>e:\vs_project\monitor\monitor\tools.cpp(447) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(447) : warning C4996: 'ExAllocatePool': was declared deprecated
+1> d:\winddk\7600.16385.1\inc\ddk\wdm.h(16147) : see declaration of 'ExAllocatePool'
+1>e:\vs_project\monitor\monitor\tools.cpp(566) : warning C4129: '/' : unrecognized character escape sequence
+1>e:\vs_project\monitor\monitor\tools.cpp(566) : warning C4129: '/' : unrecognized character escape sequence
+1>e:\vs_project\monitor\monitor\tools.cpp(676) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(676) : warning C4996: 'ExAllocatePool': was declared deprecated
 1> d:\winddk\7600.16385.1\inc\ddk\wdm.h(16147) : see declaration of 'ExAllocatePool'
 1>Generating Code...
+1>e:\vs_project\monitor\monitor\tools.cpp(463) : warning C4715: 'IntegerToChar' : not all control paths return a value
+1>e:\vs_project\monitor\monitor\tools.cpp(463) : warning C4715: 'IntegerToChar' : not all control paths return a value
 1> D:\WINDDK\7600.16385.1\Bin\x86\oacr\oacrlink /out:e:\vs_project\monitor\monitor\objchk_win7_x86\i386\FileMonitor.sys /machine:ix86 @e:\vs_project\monitor\monitor\objchk_win7_x86\i386\lnk.rsp
 1>Microsoft (R) Incremental Linker Version 9.00.30729.207
 1>Copyright (C) Microsoft Corporation.  All rights reserved.

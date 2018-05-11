@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018/5/9 22:15:28。
+﻿生成启动时间为 2018/5/11 18:55:09。
      1>项目“E:\VS_Project\Monitor\Monitor\Monitor.vcxproj”在节点 2 上(rebuild 个目标)。
      1>CoreClean:
          rmdir /s /q E:\VS_Project\Monitor\Monitor\\objchk_win7_x86
@@ -18,7 +18,7 @@
          
          BUILD: Computing Include file dependencies:
          
-         BUILD: Start time: Wed May 09 22:15:29 2018
+         BUILD: Start time: Fri May 11 18:55:10 2018
          BUILD: Examining e:\vs_project\monitor\monitor directory for files to compile.
          
              e:\vs_project\monitor\monitor 
@@ -34,12 +34,12 @@
          Compiling - tools.cpp
          Compiling - generating code...
          Linking Executable - objchk_win7_x86\i386\filemonitor.sys
-         BUILD: Finish time: Wed May 09 22:15:34 2018
+         BUILD: Finish time: Fri May 11 18:55:14 2018
          BUILD: Done
          
          
          
-             5 files compiled - 5 Warnings - 1,567 LPS
+             5 files compiled - 83 Warnings
          
              1 executable built
          
@@ -47,4 +47,4 @@
 
 生成成功。
 
-已用时间 00:00:05.59
+已用时间 00:00:05.52

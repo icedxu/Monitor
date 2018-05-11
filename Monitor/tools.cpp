@@ -30,6 +30,16 @@ extern "C" {
 #define LOCKEDCODE code_seg()  
 
 
+PFLT_FILTER gFilterHandle;
+HANDLE  handle;
+LIST_ENTRY HidePathListHeader;
+KSPIN_LOCK HidePathListLock;
+
+PRKEVENT g_pEventObject = NULL;  
+//句柄信息  
+OBJECT_HANDLE_INFORMATION g_ObjectHandleInfo;  
+
+
 
 /************************************************************************/
 /* 查找匹配串 返回匹配的偏移，不匹配返回-1                                  */
@@ -269,7 +279,18 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 				status = FltParseFileNameInformation(nameInfo);
 				
 				if (NT_SUCCESS(status))
-				{
+				{    char FileName[260] = "X:";
+				      
+				
+					if (NPUnicodeStringToChar(&nameInfo->Name, FileName))
+					{
+						if (strstr(FileName,"1.log"))
+						{
+							return  STATUS_UNSUCCESSFUL;
+						}
+					}
+							
+					
 					int i = 1;
 					int count = 1;
 			
@@ -310,6 +331,62 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 
 
 
+BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[])
+	{
+		ANSI_STRING	AnsiName;			
+		NTSTATUS	ntstatus;
+		char*		nameptr;			
+
+		__try {	    		   		    		
+			ntstatus = RtlUnicodeStringToAnsiString(&AnsiName, UniName, TRUE);		
+
+			if (AnsiName.Length < 260) {
+				nameptr = (PCHAR)AnsiName.Buffer;
+				//Convert into upper case and copy to buffer
+				strcpy(Name, _strupr(nameptr));						    	    
+				//DbgPrint("NPUnicodeStringToChar : %s\n", Name);	
+			}		  	
+			RtlFreeAnsiString(&AnsiName);		 
+		} 
+		__except(EXCEPTION_EXECUTE_HANDLER) {
+			//DbgPrint("NPUnicodeStringToChar EXCEPTION_EXECUTE_HANDLER\n");	
+			return FALSE;
+		}
+		return TRUE;
+	}      
+
+
+
+BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length)
+{
+	ANSI_STRING	AnsiName;			
+	NTSTATUS	ntstatus;
+	char*		nameptr;			
+
+	__try {	    		   		    		
+		ntstatus = RtlUnicodeStringToAnsiString(&AnsiName, UniName, TRUE);		
+
+		if (AnsiName.Length < 260) {
+			nameptr = (PCHAR)AnsiName.Buffer;
+			//Convert into upper case and copy to buffer
+			strncpy(Name, nameptr,Length/2);						    	    
+			//DbgPrint("NPUnicodeStringToChar : %s\n", Name);	
+		}		  	
+		RtlFreeAnsiString(&AnsiName);		 
+	} 
+	__except(EXCEPTION_EXECUTE_HANDLER) {
+		//DbgPrint("NPUnicodeStringToChar EXCEPTION_EXECUTE_HANDLER\n");	
+		return FALSE;
+	}
+	return TRUE;
+}      
+
+
+
+
+
+
+
  ULONG	GetTime()
 {
 	LARGE_INTEGER TickCount = {0};
@@ -321,6 +398,7 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 	ULONG Hour = 0;
 	ULONG Minute = 0;
 	ULONG Second = 0;
+	ULONG pTime;
 
 	Inc = KeQueryTimeIncrement();
 	KeQueryTickCount(&TickCount);
@@ -333,10 +411,9 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 
 	//KdPrint(("系统启动了%2d天%2d小时%2d分钟%2d秒\n", Day, Hour, Minute, Second));
 
-	//ULONG Time[1] = {0};
-//	Time[0] = Hour*3600+Minute*60+Second;
-	//KdPrint(("系统启动 %2ld秒\n", Time[0]));
-	return  (Hour*3600+Minute*60+Second);
+	pTime = (Hour*3600+Minute*60+Second);
+
+	return  pTime;
 
 	/*KeQuerySystemTime(&GelinTime);
 	ExSystemTimeToLocalTime(&GelinTime, &LocalTime);
@@ -361,6 +438,29 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 	return FALSE;
  }
 
+
+
+ //数字转为char类型
+ BOOLEAN IntegerToChar(ULONG pTime,CHAR T[])
+ {
+	 UNICODE_STRING p = {0};
+	 p.Buffer = (PWSTR)ExAllocatePool(PagedPool,BUFFERSIZE);
+	 p.MaximumLength = BUFFERSIZE;
+	 NTSTATUS status;
+	 BOOLEAN bl;
+	 status = RtlIntegerToUnicodeString(pTime,10,&p);
+	 if (NT_SUCCESS(status))
+	 {
+		// CHAR T[1] = {0};
+		 bl = NPUnicodeStringToChar(&p , T);
+		 if (!bl)
+		 {
+			return FALSE;
+		 }
+		 return TRUE;
+	 }
+
+ }
 
 
 
@@ -399,128 +499,6 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 		 }
 	 }
  }
-
-
- //typedef NTSTATUS (*QUERY_INFO_PROCESS) (
-	// __in HANDLE ProcessHandle,
-	// __in PROCESSINFOCLASS ProcessInformationClass,
-	// __out_bcount(ProcessInformationLength) PVOID ProcessInformation,
-	// __in ULONG ProcessInformationLength,
-	// __out_opt PULONG ReturnLength
-	// );
-
- //QUERY_INFO_PROCESS ZwQueryInformationProcess;
-
- //NTSTATUS PsGetProcessImageFileName(PUNICODE_STRING ProcessImageName)
- //{
-	// NTSTATUS status;
-	// ULONG returnedLength;
-	// ULONG bufferLength;
-	// PVOID buffer;
-	// PUNICODE_STRING imageName;
-
-	// PAGED_CODE(); // this eliminates the possibility of the IDLE Thread/Process
-
-	// if (NULL == ZwQueryInformationProcess) {
-
-	//	 UNICODE_STRING routineName;
-
-	//	 RtlInitUnicodeString(&routineName, L"ZwQueryInformationProcess");
-
-	//	 ZwQueryInformationProcess = 
-	//		 (QUERY_INFO_PROCESS) MmGetSystemRoutineAddress(&routineName);
-
-	//	 if (NULL == ZwQueryInformationProcess) {
-	//		 DbgPrint("Cannot resolve ZwQueryInformationProcess\n");
-	//	 }
-	// }
-	// 
-	//  Step one - get the size we need
-	// 
-	// status = ZwQueryInformationProcess( NtCurrentProcess(), 
-	//	 ProcessImageFileName,
-	//	 NULL, // buffer
-	//	 0, // buffer size
-	//	 &returnedLength);
-
-	// if (STATUS_INFO_LENGTH_MISMATCH != status) {
-
-	//	 return status;
-
-	// }
-
-	// 
-	//  Is the passed-in buffer going to be big enough for us?  
-	//  This function returns a single contguous buffer model...
-	// 
-	// bufferLength = returnedLength - sizeof(UNICODE_STRING);
-
-	// if (ProcessImageName->MaximumLength < bufferLength) {
-
-	//	 ProcessImageName->Length = (USHORT) bufferLength;
-
-	//	 return STATUS_BUFFER_OVERFLOW;
-
-	// }
-
-	// 
-	//  If we get here, the buffer IS going to be big enough for us, so 
-	//  let's allocate some storage.
-	// 
-	// buffer = ExAllocatePoolWithTag(PagedPool, returnedLength, 'ipgD');
-
-	// if (NULL == buffer) {
-
-	//	 return STATUS_INSUFFICIENT_RESOURCES;
-
-	// }
-
-	// 
-	//  Now lets go get the data
-	// 
-	// status = ZwQueryInformationProcess( NtCurrentProcess(), 
-	//	 ProcessImageFileName,
-	//	 buffer,
-	//	 returnedLength,
-	//	 &returnedLength);
-
-	// if (NT_SUCCESS(status)) {
-	//	 
-	//	  Ah, we got what we needed
-	//	 
-	//	 imageName = (PUNICODE_STRING) buffer;
-
-	//	 RtlCopyUnicodeString(ProcessImageName, imageName);
-
-	// }
-
-	// 
-	//  free our buffer
-	// 
-	// ExFreePool(buffer);
-
-	// 
-	//  And tell the caller what happened.
-	//     
-	// return status;
-
- //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -639,8 +617,7 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 
 
 
- PFLT_FILTER gFilterHandle;
- HANDLE  handle;
+
 
  VOID writeLog(__inout PFLT_CALLBACK_DATA Data,
 	 __in PCFLT_RELATED_OBJECTS FltObjects,
@@ -734,20 +711,28 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
  }
 
 
+ /****
+ *1.运用工作队列WorkItem，WorkItem能排队注册的回调函数。当例程处于DISPATCH_LEVEL级别时将回调函数塞入队列，
+ 当进程降低到PASSIVE_LEVEL时，这些队列中的回调函数将会被系统调用。
+ 2.运用PsCreateSystemThread方式注册一个线程，在注册一个事件，申请一段内存。
+ 在我们有信息写入文件的时候，先将信息写入内存，然后Set这个事件。在这个线程中循环KeWaitForSingleObject这个Event。
+ 然后在调用ZwWriteFile将信息写入文件。这里要注意一点的是文件读写的同步问题。我实现的就是这种方案。
+ ***/
+
 
  VOID StartThread()
  {
     NTSTATUS status = STATUS_SUCCESS;
 	HANDLE   hThread = NULL;
-	KeInitializeEvent(&s_Event, SynchronizationEvent, FALSE);
+	KEVENT kEvent;
+	KeInitializeEvent(&kEvent,SynchronizationEvent,FALSE);
 	status = PsCreateSystemThread(&hThread, //创建新线程
 		   (ACCESS_MASK)THREAD_ALL_ACCESS,
 		   NULL,
 		   NULL,//NtCurrentProcess(),线程所在地址空间的进程的handle
 		   NULL,
 		   (PKSTART_ROUTINE)ThreadProc,
-		   NULL);  //PVOID       StartContext   对应ThreadProc中的参数
-
+		  &kEvent);  //PVOID       StartContext   对应ThreadProc中的参数
 	if (!NT_SUCCESS(status))
 	{
 		KdPrint(("创建失败 \n"));
@@ -755,37 +740,115 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 		return ;
 	}
 	KdPrint(("创建成功 \n"));
-
 	ZwClose(hThread);
-	KeWaitForSingleObject(&s_Event, Executive, KernelMode, 0, 0);
-	KdPrint(("线程启动函数返回!!\n"));
+
+	KeWaitForSingleObject(&kEvent,Executive,KernelMode,FALSE,NULL);
 	return ;
  }
 
- VOID  ThreadProc()  
+
+
+
+ VOID  ThreadProc(IN PVOID pContext)  
  {  
-	 DbgPrint("CreateThread Successfully");    
-	 //创建线程必须用函数PsTerminateSystemThread强制线程结束。否则该线程是无法自动退出的。
-	 //PUNICODE_STRING str = (PUNICODE_STRING)Context;
+	 DbgPrint("CreateThread Successfully");  
+	 PKEVENT pEvent = (PKEVENT)pContext;
+	 PLOG_LIST hideList;
 	 LARGE_INTEGER Interval;
-	 LONG Msec = 3000;
+	 ULONG Msec = 3000;
+	 PLIST_ENTRY pListNode;
+	 OBJECT_ATTRIBUTES objectAttributes;
+	 IO_STATUS_BLOCK iostatus;
+	 HANDLE hfile;
+	 NTSTATUS  status;
+	 UNICODE_STRING logFileUnicodeString;
 
-	 //打印字符串
-	// KdPrint(("进入线程函数 : %wZ\n", str));
+	 Interval.QuadPart = DELAY_ONE_MILLISECOND;
+	 Interval.QuadPart *=Msec;
 
-	 //Msec若为1000,则 睡眠的时间为： 1000 * 100 ns * 10 *1000 =1s 
-	// Interval.QuadPart = DELAY_ONE_MILLISECOND;
-	// Interval.QuadPart *= Msec;
+	 GetTime();
+	 GetTime();
 
-	 //GetTime();
-	// GetTime();
-	// KeDelayExecutionThread(KernelMode, 0, &Interval);
-	// GetTime();
+	 KeDelayExecutionThread(KernelMode, 0, &Interval);
+	 GetTime();
+
+	 RtlInitUnicodeString( &logFileUnicodeString, L"\\??\\C:\\1.LOG");
+	// while(TRUE){
+	
+		 while (!IsListEmpty(&HidePathListHeader))
+		 {
+			 LIST_ENTRY *pEntry = RemoveHeadList(&HidePathListHeader);
+			 hideList = CONTAINING_RECORD(pEntry,LOG_LIST,listNode);
+			 // KdPrint(("yiyi = %S",hideList->xxPath));
+			 InitializeObjectAttributes(&objectAttributes,
+				 &logFileUnicodeString,
+				 OBJ_CASE_INSENSITIVE,//对大小写敏感 
+				 NULL, 
+				 NULL );
+
+			 //创建文件
+			 status = ZwCreateFile( &hfile, 
+				 FILE_APPEND_DATA,
+				 &objectAttributes, 
+				 &iostatus, 
+				 NULL,
+				 FILE_ATTRIBUTE_NORMAL, 
+				 FILE_SHARE_READ,
+				 FILE_OPEN_IF,//存在该文件则打开 ,不存在则创建
+				 FILE_SYNCHRONOUS_IO_NONALERT, 
+				 NULL, 
+				 0 );
+
+			 if (!NT_SUCCESS(status))
+			 {
+				 KdPrint(("The file is not exist!\n"));
+				 return;
+			 }
+			 UNICODE_STRING  p;
+			 CHAR *Content;
+			 Content="these words is my first write data \r\n哈哈\rnihao\nhao";
+			 RtlInitUnicodeString(&p,L"time = 1221 \r\n");
+			// ZwWriteFile(hfile,NULL,NULL,NULL,&iostatus,p.Buffer,p.Length,NULL,NULL);
+
+			 ZwWriteFile(hfile,NULL,NULL,NULL,&iostatus,hideList->xxPath,strlen(hideList->xxPath),NULL,NULL);
+			 //关闭文件句柄
+			 ZwClose(hfile);
+			 ExFreePool(hideList);
+		
+		// }
+
+	 
+	 }
+	 KeSetEvent(pEvent,IO_NO_INCREMENT,FALSE);
 
 	 KdPrint(("线程函数结束\n"));
-	 //设置事件
-	 KeSetEvent(&s_Event, 0, TRUE);
+
+
+
+
+	 /*if (!IsListEmpty(&HidePathListHeader))
+	 {
+		 for (pListNode = HidePathListHeader.Flink; pListNode!=&HidePathListHeader; pListNode = pListNode->Flink)
+		 {
+			 hideList = CONTAINING_RECORD(pListNode,HIDE_PATH_LIST,listNode);
+			 if (hideList->xxPath)
+			 {
+				 KdPrint(("hideList->xxPath =%S \n",hideList->xxPath));
+				 KeAcquireSpinLock(&HidePathListLock,&Irql);
+				 RemoveEntryList(&hideList->listNode);
+				 ExFreePool(hideList);	
+				 KeReleaseSpinLock(&HidePathListLock,Irql);
+
+			 }
+		 }
+	 }*/
+
+
+
+
+
+
 	 //结束自己
-	 PsTerminateSystemThread(STATUS_SUCCESS);   
+     PsTerminateSystemThread(STATUS_SUCCESS);   
 	 return ;
  }  

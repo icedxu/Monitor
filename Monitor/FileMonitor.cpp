@@ -62,7 +62,6 @@ PFLT_PORT serverPort=NULL;
 extern "C" {
 #endif
 
-
 	////驱动入口
 	NTSTATUS DriverEntry(
 		IN OUT PDRIVER_OBJECT   DriverObject,
@@ -78,7 +77,7 @@ extern "C" {
 
 		//过滤掉系统自带的一些进程
 	//	CHAR StrategyString[]="System;svchost.exe;explorer.exe;vmtoolsd.exe;";
-		//key_word_header = GetStrategyFromString(StrategyString);
+	//key_word_header = GetStrategyFromString(StrategyString);
 	
 		
 	
@@ -89,9 +88,12 @@ extern "C" {
 		PsSetCreateProcessNotifyRoutine(MyMiniFilterProcessNotify, FALSE);
 		PsSetLoadImageNotifyRoutine(MyMiniFilterLoadImage);//
 
+		InitializeListHead(&HidePathListHeader);
+		KeInitializeSpinLock(&HidePathListLock);
 
-		StartThread();
-		//ThreadProc();
+
+	
+
 
 		//初始化Lookaside对象,不分页
 		ExInitializeNPagedLookasideList( &Pre2PostContextList,
@@ -149,6 +151,8 @@ extern "C" {
 			}
 				FltFreeSecurityDescriptor( sd );
 		} 
+			StartThread();
+
 		return status;
 	}
 
@@ -202,16 +206,44 @@ CreatePost(
 				if (NT_SUCCESS(status))
 				{
 					PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
-						//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+					PEPROCESS  p = FltGetRequestorProcess(Data);
+					ULONG ProcessId = FltGetRequestorProcessId(Data);  
+					ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread); 
+					EnumProcess(ThreadId);
+
+					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
+			
+					//	KdPrint((" ThreadId = %u \n",ThreadId));
 					ULONG Time = GetTime();
+					CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
+
+					IntegerToChar(Time,T);
+					IntegerToChar(ProcessId,PPID);
+					IntegerToChar(ThreadId,PID);
+					//KdPrint(("%s \n",T));
+					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
+
+					CHAR FileName[260] ={0}; 
+
+					NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
+					//KdPrint((" FileName = %s",FileName));
+					//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
+					CHAR STR[260] = {"T="};
+
+
+
 					if (!IsSecretProcess(procName))
 					{
-						//KdPrint(("%d Newfile进程 = %s,类型=%wZ,卷fu路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.ParentDir));
+						strcat(STR,T);strcat(STR,";OP=1;C="); 
+						
+						strcat(STR,procName);strcat(STR,";PID=");
+						strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
+						strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
+						KdPrint(("%s",STR));
 
 					}
-					
-					
 
+				
 
 					/*KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
 					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
@@ -220,11 +252,6 @@ CreatePost(
 
 				
 				} 
-		 
-		/*		CHAR *lp ;
-	
-			lp ="nihaonihao \r\n";
-			DbgKeLog(lp);*/
 			
 		}
 	return retValue;
@@ -279,34 +306,59 @@ FLT_POSTOP_CALLBACK_STATUS
 	
 if (NT_SUCCESS(status))
 		{
-			//PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
+			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
 			PEPROCESS  p = FltGetRequestorProcess(Data);
 			ULONG ProcessId = FltGetRequestorProcessId(Data);  
 			ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread);  
 			
-		//	EnumProcess(ThreadId);
+			EnumProcess(ThreadId);
 		//	KdPrint((" ThreadId = %u \n",ThreadId));
-			/*ULONG Time = GetTime();
+			ULONG Time = GetTime();
+			CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
+
+			IntegerToChar(Time,T);
+		    IntegerToChar(ProcessId,PPID);
+		    IntegerToChar(ThreadId,PID);
+			//KdPrint(("%s \n",T));
+		   // KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
+
+	    	CHAR FileName[260] ={0}; 
+
+			NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
+			//KdPrint((" FileName = %s",FileName));
+			//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
+			CHAR STR[260] = {"T="};
+
+
+
 			if (!IsSecretProcess(procName))
 			{
-			
 
-			KdPrint((" procName= %s PID =%u,TID = %u\n",procName,ThreadId,ProcessId));
-			KdPrint(("%d Write 进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileFullPath));
+				strcat(STR,T);strcat(STR,";OP=4;C="); strcat(STR,procName);strcat(STR,";PID=");
+				strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
+				strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
+				KdPrint(("%s",STR));
+
+				PLOG_LIST pathListNode ,pathList;
+				pathListNode = (PLOG_LIST)ExAllocatePool(NonPagedPool,sizeof(LOG_LIST));
+				if (pathListNode == NULL)
+				{
+					KdPrint(("队列申请失败  \n"));  
+				}
+				//wcscpy(pathListNode->xxPath,pszDest);
+				RtlCopyMemory(pathListNode->xxPath,STR,strlen(STR));
+				InsertTailList(&HidePathListHeader,&pathListNode->listNode);//插入队尾
+
 
 
 			}
-			*//*
-					KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
-					KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
-					KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
-					KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	*/
-			// writeLog( Data,FltObjects,CompletionContext);
+			
+					//KdPrint(("文件类型 = %d,文件路径:= %d ", temCtx.fileStyle.Length,temCtx.fileFullPath.Length));
+					//KdPrint(("所在卷:= %d 父目录 = %d\n", temCtx.fileVolumeName.Length,temCtx.fileName.Length));
+					//KdPrint(("文件路径:= %wZ , 文件类型 = %wZ", &temCtx.fileFullPath,&temCtx.fileStyle));	
+					//KdPrint(("所在卷 =%wZ,父目录=%wZ \n ",&temCtx.fileVolumeName,&temCtx.fileName));	
 
-	//		char *pName ;
-	//		pName = "nihaoooo\n";
-	//		KdPrint(("%s\n", pName)); 
-
+		
 	//		ULONG replyLength;  
 	//		SCANNER_REPLY   Reply = {0};  
 	//		replyLength = sizeof(SCANNER_REPLY);  
@@ -336,6 +388,34 @@ if (NT_SUCCESS(status))
 	//			}  
 
 
+
+		   /* CHAR pszDest[30];
+		    ULONG cbDest = 30;
+			LPCSTR pszFormat = "%s %d + %d = %d.";
+			CHAR* pszTxt = "The answer is";
+
+			RtlStringCbPrintfA(pszDest, cbDest, pszFormat, pszTxt, 1, 2, "3\n");*/
+		//	KdPrint(("%s",pszDest));
+
+
+
+
+			
+
+
+
+			//设置事件为有信号，通知  
+			//KeSetEvent(g_pEventObject, 0, FALSE);  
+
+
+			//if (pathListNode == NULL)
+			//{
+			//	return   FLT_POSTOP_FINISHED_PROCESSING;;
+			//}
+			//wcscpy(pathListNode->xxPath,L"你好！");
+			//KeAcquireSpinLock(&HidePathListLock,&Irql);
+			//InsertTailList(&HidePathListHeader,&pathListNode->listNode);
+			//KeReleaseSpinLock(&HidePathListLock,Irql);
 
 		} 
 
@@ -377,16 +457,62 @@ SetInformationPre(
 	status = GetFileInformation(Data,FltObjects,&temCtx);
 	if (NT_SUCCESS(status))
 		{
+
+			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
+			PEPROCESS  p = FltGetRequestorProcess(Data);
+			ULONG ProcessId = FltGetRequestorProcessId(Data);  
+			ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread); 
+
+
+			EnumProcess(ThreadId);
+			//	KdPrint((" ThreadId = %u \n",ThreadId));
+			
+
+
 			if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileDispositionInformation)
 			{
-				PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
 				if (!IsSecretProcess(procName))
 				{
 					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
 					ULONG Time = GetTime();
-				   KdPrint(("%d Delete进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+					CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
+
+					IntegerToChar(Time,T);
+					IntegerToChar(ProcessId,PPID);
+					IntegerToChar(ThreadId,PID);
+					//KdPrint(("%s \n",T));
+					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
+
+					CHAR FileName[260] ={0}; 
+
+					NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
+					//KdPrint((" FileName = %s",FileName));
+					//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
+					CHAR STR[260] = {"T="};
+
+					strcat(STR,T);strcat(STR,";OP=2;C="); strcat(STR,procName);strcat(STR,";PID=");
+					strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
+					strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
+					KdPrint(("%s",STR));
+
+
+
+				
+
+				   PLOG_LIST pathListNode ,pathList;
+				   pathListNode = (PLOG_LIST)ExAllocatePool(NonPagedPool,sizeof(LOG_LIST));
+				   if (pathListNode == NULL)
+				   {
+					   KdPrint(("队列初始化失败  \n"));  
+				   }
+				   RtlCopyMemory(pathListNode->xxPath,STR,strlen(STR));
+				   InsertTailList(&HidePathListHeader,&pathListNode->listNode);//插入队尾
+
+				   //设置事件为有信号，通知  
+				 //  KeSetEvent(g_pEventObject, 0, FALSE); 
+
 				}
-		}
+		   }
 
 
 			if (Data->Iopb->Parameters.SetFileInformation.FileInformationClass == FileRenameInformation)
@@ -395,8 +521,26 @@ SetInformationPre(
 				if (!IsSecretProcess(procName))
 				{
 					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
-				  ULONG Time = GetTime();
-				  KdPrint(("%d Rename进程 = %s,类型=%wZ,卷路径=%wZ\n ",Time,procName,&temCtx.fileStyle,&temCtx.fileVolumeName));
+					ULONG Time = GetTime();
+					CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
+
+					IntegerToChar(Time,T);
+					IntegerToChar(ProcessId,PPID);
+					IntegerToChar(ThreadId,PID);
+					//KdPrint(("%s \n",T));
+					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
+
+					CHAR FileName[260] ={0}; 
+
+					NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
+					//KdPrint((" FileName = %s",FileName));
+					//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
+					CHAR STR[260] = {"T="};
+
+					strcat(STR,T);strcat(STR,";OP=3;C="); strcat(STR,procName);strcat(STR,";PID=");
+					strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
+					strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
+					KdPrint(("%s",STR));
 				}
 			}
 
