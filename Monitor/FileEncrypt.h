@@ -25,7 +25,8 @@
 
 
 
-
+#define PBUFFER_TAG  'BUF'
+#define LENGTH_READ  40
 
 
 
@@ -39,6 +40,9 @@ extern  PFLT_PORT gClientPort;
 extern PRKEVENT g_pEventObject;  
 //句柄信息  
 extern  OBJECT_HANDLE_INFORMATION g_ObjectHandleInfo;  
+
+
+extern BOOLEAN EXIT;
 
 
 
@@ -86,20 +90,7 @@ typedef struct _TYPE_KEY_PROCESS
 } TYPE_KEY_PROCESS,*PTYPE_KEY_PROCESS;
 
 
-//
-//  This is a volume context, one of these are attached to each volume
-//  we monitor.  This is used to get a "DOS" name for debug display.
-//
 
-typedef struct _VOLUME_CONTEXT {
-
-
-    UNICODE_STRING Name;         //保存要显示的名字
-    ULONG          SectorSize;   //保存要显示的卷的大小
-
-} VOLUME_CONTEXT, *PVOLUME_CONTEXT;
-
-#define MIN_SECTOR_SIZE 0x200
 
 
 /************************************************************************/
@@ -112,6 +103,29 @@ typedef struct _PRE_2_POST_CONTEXT {
     PVOID   SwappedBuffer;  //将我们分配的缓冲区地址传递给Post函数以便于释放
 
 } PRE_2_POST_CONTEXT, *PPRE_2_POST_CONTEXT;
+
+
+
+//定义流上下文,判断文件头信息
+typedef struct _STREAM_HEAD
+{
+	FILE_STANDARD_INFORMATION fileInfo;//文件信息
+
+	CHAR  fileHead[40];//文件头
+
+	BOOLEAN isRead;//文件是否被读过
+
+} STREAM_HEAD,*PSTREAM_HEAD;
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -130,6 +144,7 @@ typedef struct _STREAM_HANDLE_CONTEXT
 	UNICODE_STRING  fileStyle; //文件类型 
 
 } STREAM_HANDLE_CONTEXT,*PSTREAM_HANDLE_CONTEXT;
+
 
 //声明 API
 extern"C" __declspec(dllimport)UCHAR*PsGetProcessImageFileName(IN PEPROCESS Process); 
@@ -249,6 +264,14 @@ FLT_POSTOP_CALLBACK_STATUS
 	);
 
 
+FLT_POSTOP_CALLBACK_STATUS
+	ReadPost(
+	__inout PFLT_CALLBACK_DATA Data,
+	__in PCFLT_RELATED_OBJECTS FltObjects,
+	__in PVOID CompletionContext,
+	__in FLT_POST_OPERATION_FLAGS Flags
+	);
+
 
 
 /////IRP_MJ_WRITE
@@ -303,24 +326,25 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 
 
 CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
-	//{ IRP_MJ_CREATE,
+	{ IRP_MJ_CREATE,
+	0,
+	NULL,         //
+	CreatePost 
+	},
+	
+
+
+	//{ IRP_MJ_WRITE,
 	//0,
-	//NULL,         //CreatePre  可不看
-	//CreatePost 
+	//NULL,
+	//WritePost
 	//},
 
-	
-	{ IRP_MJ_WRITE,
-	0,
-	WritePre,  
-	WritePost
-	},
-
-
+/*
 	{ IRP_MJ_SET_INFORMATION,   
 	0,
 	SetInformationPre,
-	SetInformationPost },
+	SetInformationPost },*/
 
 	{ IRP_MJ_OPERATION_END }
 };
@@ -331,16 +355,10 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 //
 CONST FLT_CONTEXT_REGISTRATION ContextNotifications[] = {
 
-	{ FLT_VOLUME_CONTEXT,
-	0,
-	CleanupStreamHandleContext,
-	sizeof(VOLUME_CONTEXT),
-	CONTEXT_TAG },
-
 	{ FLT_STREAMHANDLE_CONTEXT,
 	0,
 	CleanupStreamHandleContext,
-	sizeof(STREAM_HANDLE_CONTEXT),
+	sizeof(STREAM_HEAD),
 	STREAM_HANDLE_CONTEXT_TAG },
 
 	{ FLT_CONTEXT_END }

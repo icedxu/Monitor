@@ -139,6 +139,7 @@ typedef struct _MESSAGE_BACK
 
 
 PCHAR  GetCurrentTimeString();
+ BOOLEAN  CharToHex(CHAR *C ,CHAR *Hex);
 BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[]);
 BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length);
 ULONG	GetTime();

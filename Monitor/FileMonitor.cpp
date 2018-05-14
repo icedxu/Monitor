@@ -88,8 +88,10 @@ extern "C" {
 		PsSetCreateProcessNotifyRoutine(MyMiniFilterProcessNotify, FALSE);
 		PsSetLoadImageNotifyRoutine(MyMiniFilterLoadImage);//
 
-		InitializeListHead(&HidePathListHeader);
-		KeInitializeSpinLock(&HidePathListLock);
+		InitializeListHead(&HidePathListHeader); //初始化链表头
+		KeInitializeSpinLock(&HidePathListLock); //初始化链表锁
+
+	//	KeInitializeEvent(&s_Event ,SynchronizationEvent,FALSE);  //初始化事件
 
 
 	
@@ -151,7 +153,7 @@ extern "C" {
 			}
 				FltFreeSecurityDescriptor( sd );
 		} 
-			StartThread();
+		//	StartThread();
 
 		return status;
 	}
@@ -166,18 +168,6 @@ extern "C" {
 ///////////////////////////////Create/////////////////////////////////////
 
 
-FLT_PREOP_CALLBACK_STATUS
-CreatePre(
-			__inout PFLT_CALLBACK_DATA Data,
-			__in PCFLT_RELATED_OBJECTS FltObjects,
-			__deref_out_opt PVOID *CompletionContext
-			)
-{
-
-	return  FLT_PREOP_SUCCESS_WITH_CALLBACK;
-}
-
-
 #pragma  LOCKEDCODE
 FLT_POSTOP_CALLBACK_STATUS
 CreatePost(
@@ -188,7 +178,7 @@ CreatePost(
 			 )
 {
 	FLT_POSTOP_CALLBACK_STATUS retValue = FLT_POSTOP_FINISHED_PROCESSING;
-	PSTREAM_HANDLE_CONTEXT streamCtx = NULL;
+	
 	NTSTATUS status;
 	//检查中断级
 	if (KeGetCurrentIrql() >= DISPATCH_LEVEL)
@@ -224,22 +214,38 @@ CreatePost(
 					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
 
 					CHAR FileName[260] ={0}; 
-
+                  //长度木有起作用
 					NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
-					//KdPrint((" FileName = %s",FileName));
+					//KdPrint(("yuan = %wZ ; FileName = %s,Length = %d",&temCtx.fileVolumeName,FileName,temCtx.fileVolumeName.Length));
 					//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
-					CHAR STR[260] = {"T="};
-
+					//CHAR STR[260] = {"T="};
+					CHAR STR[260] = "XXX;";
 
 
 					if (!IsSecretProcess(procName))
 					{
-						strcat(STR,T);strcat(STR,";OP=1;C="); 
-						
+						/*strcat(STR,T);strcat(STR,";OP=1;C="); 
 						strcat(STR,procName);strcat(STR,";PID=");
 						strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
 						strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
-						KdPrint(("%s",STR));
+						KdPrint(("%s",STR));*/
+
+						strcat(STR,T);strcat(STR,";1;"); 
+						strcat(STR,procName);strcat(STR,";");
+						strcat(STR,PID);strcat(STR,";"); strcat(STR,PPID);strcat(STR,";");
+						strcat(STR,FileName);strcat(STR,";"); strcat(STR,"1555\r\n");
+						//KdPrint(("%s",STR));
+
+
+						PLOG_LIST pathListNode ,pathList;
+						pathListNode = (PLOG_LIST)ExAllocatePool(NonPagedPool,sizeof(LOG_LIST));
+						if (pathListNode == NULL)
+						{
+							KdPrint(("队列申请失败  \n"));  
+						}
+						//wcscpy(pathListNode->xxPath,pszDest);
+						RtlCopyMemory(pathListNode->xxPath,STR,strlen(STR));
+						InsertTailList(&HidePathListHeader,&pathListNode->listNode);//插入队尾
 
 					}
 
@@ -254,32 +260,119 @@ CreatePost(
 				} 
 			
 		}
-	return retValue;
-}
 
 
 
-///////////////////////////////Write/////////////////////////////////////
-#pragma  LOCKEDCODE
-FLT_PREOP_CALLBACK_STATUS
-	WritePre(
-	__inout PFLT_CALLBACK_DATA Data,
-	__in PCFLT_RELATED_OBJECTS FltObjects,
-	__deref_out_opt PVOID *CompletionContext
-	)
-{
-	PFLT_IO_PARAMETER_BLOCK iopb = Data->Iopb;
-	FLT_PREOP_CALLBACK_STATUS retValue = FLT_PREOP_SUCCESS_WITH_CALLBACK;
 
-	//检查中断级
-	if (KeGetCurrentIrql() >= DISPATCH_LEVEL)
-	{
-		return retValue; 
-	}
+
 
 	
+
+
+	/*	PSTREAM_HEAD headCtx;
+		status=FltGetStreamHandleContext(FltObjects->Instance,FltObjects->FileObject,(PFLT_CONTEXT *)&headCtx);
+		if(NT_SUCCESS(status))
+		{
+			if (NULL!= headCtx)
+			{
+				KdPrint(("4\n"));
+				FltReleaseContext(headCtx);
+			}
+			return FLT_POSTOP_FINISHED_PROCESSING;
+		} 
+
+		if (NULL!= headCtx)
+		{
+			KdPrint(("3\n"));
+			FltReleaseContext(headCtx);
+		}
+*/
+
+
+		STREAM_HEAD headStream ;
+		headStream.isRead = FALSE;
+		LARGE_INTEGER offset;
+		offset.QuadPart = 0;
+	    ULONG readLen = 0;
+	
+	    status = FltReadFile(FltObjects->Instance,
+		                	FltObjects->FileObject,
+							&offset,
+							LENGTH_READ,
+							(PVOID)headStream.fileHead,
+							FLTFL_IO_OPERATION_DO_NOT_UPDATE_BYTE_OFFSET|FLTFL_IO_OPERATION_NON_CACHED,
+							&readLen,
+							NULL,
+							NULL);
+		if (NT_SUCCESS(status))
+		{
+
+			KdPrint(("head is %s ，读取的长度是  %ld ,%ld\n",headStream.fileHead,readLen,strlen(headStream.fileHead)));
+			CHAR tmp[LENGTH_READ] = {0};
+
+			CharToHex(headStream.fileHead,tmp);
+			KdPrint(("char fileHead = %s\n",tmp));
+
+			////创建流上下文，分配一个上下文结构体
+   //   	    status =FltAllocateContext( FltObjects->Filter,
+			//							FLT_STREAMHANDLE_CONTEXT,
+			//							sizeof(STREAM_HEAD), //上下文大小
+			//							NonPagedPool, //池子类型
+			//							(PFLT_CONTEXT *)&headStream); //返回的上下文
+			//	if (!NT_SUCCESS(status)) 
+			//	{
+			//		KdPrint(("FltAllocateContext分配失败， 错误代码status=%08x \n",status));
+			//		if (NULL!= headStream)
+			//		{
+			//			KdPrint(("1\n"));
+			//			FltReleaseContext(headStream);
+			//		}
+			//		KdPrint(("111\n"));
+			//		return retValue;
+			//	}
+			//	if (NULL!= headStream)
+			//	{
+			//		KdPrint(("2\n"));	
+			//		FltReleaseContext(headStream);
+			//		
+			//	}
+   //      
+
+
+				//PFLT_CONTEXT oldCtx = NULL;	
+				////设置文件流句柄上下文
+				//status=FltSetStreamHandleContext(FltObjects->Instance, 
+				//	FltObjects->FileObject,
+				//	FLT_SET_CONTEXT_REPLACE_IF_EXISTS,  //操作类型
+				//	&headStream, //新的上下文
+				//	&oldCtx);  //以前存在的旧的上下文		
+				//if (!NT_SUCCESS(status))
+				//{
+				//	KdPrint(("FltSetStreamHandleContext设置失败,错误代码status=%08x \n",status));
+				//	if (NULL!= &headStream)
+				//	{
+				//		FltReleaseContext(&headStream);
+				//	}
+				//	return retValue;
+				//}	
+				//KdPrint(("FltSetStreamHandleContext成功 \n"));
+				//headStream.isRead = TRUE;
+
+
+		
+		}
+	
+
 	return retValue;
 }
+
+
+
+
+
+
+
+
 
 
 #pragma  LOCKEDCODE
@@ -327,17 +420,30 @@ if (NT_SUCCESS(status))
 			NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
 			//KdPrint((" FileName = %s",FileName));
 			//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
-			CHAR STR[260] = {"T="};
+			//CHAR STR[260] = {"T="};
+			CHAR STR[260] = "XXX;";
+
+
+
+
 
 
 
 			if (!IsSecretProcess(procName))
 			{
 
-				strcat(STR,T);strcat(STR,";OP=4;C="); strcat(STR,procName);strcat(STR,";PID=");
+				/*strcat(STR,T);strcat(STR,";OP=4;C="); strcat(STR,procName);strcat(STR,";PID=");
 				strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
 				strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
-				KdPrint(("%s",STR));
+				KdPrint(("%s",STR));*/
+
+
+				strcat(STR,T);strcat(STR,";4;"); 
+				strcat(STR,procName);strcat(STR,";");
+				strcat(STR,PID);strcat(STR,";"); strcat(STR,PPID);strcat(STR,";");
+				strcat(STR,FileName);strcat(STR,";"); strcat(STR,"1555\n");
+
+
 
 				PLOG_LIST pathListNode ,pathList;
 				pathListNode = (PLOG_LIST)ExAllocatePool(NonPagedPool,sizeof(LOG_LIST));
@@ -419,6 +525,47 @@ if (NT_SUCCESS(status))
 
 		} 
 
+
+
+
+		PSTREAM_HEAD headCtx;
+		status=FltGetStreamHandleContext(FltObjects->Instance,FltObjects->FileObject,(PFLT_CONTEXT *)&headCtx);
+		if(!NT_SUCCESS(status))
+		{
+			KdPrint(("write 获取上下文流句柄失败 \n"));
+			return FLT_POSTOP_FINISHED_PROCESSING;
+		} 
+
+
+		LARGE_INTEGER offset;
+		STREAM_HEAD headStream;
+		offset.QuadPart = 0;
+		ULONG readLen = 0;
+
+		status = FltReadFile(FltObjects->Instance,
+			FltObjects->FileObject,
+			&offset,
+			LENGTH_READ,
+			(PVOID)headStream.fileHead,
+			FLTFL_IO_OPERATION_DO_NOT_UPDATE_BYTE_OFFSET|FLTFL_IO_OPERATION_NON_CACHED,
+			&readLen,
+			NULL,
+			NULL);
+		if (NT_SUCCESS(status))
+		{
+			if (strncmp(headStream.fileHead,headCtx->fileHead,LENGTH_READ))
+			{
+				KdPrint(("相同\n"));
+			}
+		}
+
+
+		if (NULL!=headCtx) //icedxu
+		{
+			FltReleaseContext(headCtx);
+		}
+
+
 	return FLT_POSTOP_FINISHED_PROCESSING;
 }
 
@@ -488,14 +635,18 @@ SetInformationPre(
 					NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
 					//KdPrint((" FileName = %s",FileName));
 					//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
-					CHAR STR[260] = {"T="};
+					//CHAR STR[260] = {"T="};
+					CHAR STR[260] = "XXX;";
 
-					strcat(STR,T);strcat(STR,";OP=2;C="); strcat(STR,procName);strcat(STR,";PID=");
+					/*strcat(STR,T);strcat(STR,";OP=2;C="); strcat(STR,procName);strcat(STR,";PID=");
 					strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
 					strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
-					KdPrint(("%s",STR));
+					KdPrint(("%s",STR));*/
 
-
+					strcat(STR,T);strcat(STR,";2;"); 
+					strcat(STR,procName);strcat(STR,";");
+					strcat(STR,PID);strcat(STR,";"); strcat(STR,PPID);strcat(STR,";");
+					strcat(STR,FileName);strcat(STR,";"); strcat(STR,"1555\n");
 
 				
 
@@ -530,17 +681,33 @@ SetInformationPre(
 					//KdPrint(("%s \n",T));
 					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
 
-					CHAR FileName[260] ={0}; 
+					CHAR FileName[260] ={'0'}; 
 
 					NPUnicodeStringToChar(&temCtx.fileVolumeName, FileName,temCtx.fileVolumeName.Length);
 					//KdPrint((" FileName = %s",FileName));
 					//T=0;OP=1;C=test.exe;  PID=123;PPID=321;P=\\Device\\HarddiskVolume1\\test;S=15
-					CHAR STR[260] = {"T="};
+				/*	CHAR STR[260] = {"T="};
 
 					strcat(STR,T);strcat(STR,";OP=3;C="); strcat(STR,procName);strcat(STR,";PID=");
 					strcat(STR,PID);strcat(STR,";PPID="); strcat(STR,PPID);strcat(STR,";P=");
 					strcat(STR,FileName);strcat(STR,";S="); strcat(STR,"1555\r\n");
-					KdPrint(("%s",STR));
+					KdPrint(("%s",STR));*/
+
+					CHAR STR[260] = "XXX;";
+
+					strcat(STR,T);strcat(STR,";3;"); 
+					strcat(STR,procName);strcat(STR,";");
+					strcat(STR,PID);strcat(STR,";"); strcat(STR,PPID);strcat(STR,";");
+					strcat(STR,FileName);strcat(STR,";"); strcat(STR,"1555\n");
+
+					PLOG_LIST pathListNode ,pathList;
+					pathListNode = (PLOG_LIST)ExAllocatePool(NonPagedPool,sizeof(LOG_LIST));
+					if (pathListNode == NULL)
+					{
+						KdPrint(("队列初始化失败  \n"));  
+					}
+					RtlCopyMemory(pathListNode->xxPath,STR,strlen(STR));
+					InsertTailList(&HidePathListHeader,&pathListNode->listNode);//插入队尾
 				}
 			}
 
@@ -581,10 +748,11 @@ FilterUnload (
 	UNREFERENCED_PARAMETER( Flags );
 	//FreeStrategy(key_word_header);	
 	FltCloseCommunicationPort(serverPort);
-
+	EXIT = FALSE;
 	PsSetCreateProcessNotifyRoutine(MyMiniFilterProcessNotify, TRUE);
 	PsRemoveLoadImageNotifyRoutine(MyMiniFilterLoadImage);
 	ExDeleteNPagedLookasideList( &Pre2PostContextList );
+	KdPrint(("ni\n"));
 	FltUnregisterFilter( gFilterHandle );
 	return STATUS_SUCCESS;
 }
@@ -631,6 +799,7 @@ CleanupStreamHandleContext(
 {
 
 	UNREFERENCED_PARAMETER( ContextType );
+	KdPrint(("进入CleanupStreamHandleContext \n"));
 
 	switch(ContextType)
 	{
@@ -640,56 +809,9 @@ CleanupStreamHandleContext(
 			break;
 
 		}
-	case FLT_VOLUME_CONTEXT:
-		{
-			PVOLUME_CONTEXT VolCtx =(PVOLUME_CONTEXT)Context;
-			////KdPrind(("进入FLT_VOLUME_CONTEXT \n"));
-			if (VolCtx->Name.Buffer != NULL) 
-			{
-				ExFreePool(VolCtx->Name.Buffer);
-				VolCtx->Name.Buffer = NULL;
-			}
-			break;
-		}
-
-	case FLT_INSTANCE_CONTEXT:
-		{
-			////KdPrind(("进入 FLT_INSTANCE_CONTEXT"));
-			break;
-		}
-			
-	case FLT_FILE_CONTEXT:
-		{
-		//	//KdPrind(("进入 FLT_FILE_CONTEXT"));
-			break;
-			}
-			
-	case FLT_STREAM_CONTEXT:
-		{
-			////KdPrind(("进入 FLT_STREAM_CONTEXT"));
-			break;
-			}
-		
-	case FLT_TRANSACTION_CONTEXT:
-		{
-			////KdPrind(("进入 FLT_TRANSACTION_CONTEXT"));
-			break;
-			}
-			
-	case FLT_CONTEXT_END:
-		{
-			////KdPrind(("进入 FLT_CONTEXT_END  "));
-			break;
-		}
-	default:
-		{
-			////KdPrind(("进入default\n"));
-			break;
-		}
 	}
 
-
-	////KdPrind(("CleanupStreamHandleContext离开\n"));
+	KdPrint(("CleanupStreamHandleContext离开\n"));
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -706,7 +828,6 @@ InstanceQueryTeardown (
 	UNREFERENCED_PARAMETER( Flags );
 	//检查中断级
 	PAGED_CODE();	
-	//KdPrind(("进入InstanceQueryTeardown \n"));
 	return STATUS_SUCCESS;
 }
 
