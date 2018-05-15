@@ -72,7 +72,7 @@ typedef struct _HIDE_PATH_LIST
 #define PROCESS_NAME_LEN      32
 typedef struct _PROCESS_INFO
 {
-	CHAR processName[PROCESS_NAME_LEN];//进程名称
+	 CHAR processName[PROCESS_NAME_LEN];//进程名称
 
 	_PROCESS_INFO *next;//下一个节点
 
@@ -109,7 +109,7 @@ typedef struct _PRE_2_POST_CONTEXT {
 //定义流上下文,判断文件头信息
 typedef struct _STREAM_HEAD
 {
-	FILE_STANDARD_INFORMATION fileInfo;//文件信息
+	//FILE_STANDARD_INFORMATION fileInfo;//文件信息
 
 	CHAR  fileHead[40];//文件头
 
@@ -130,7 +130,7 @@ typedef struct _STREAM_HEAD
 
 
 
-//定义流上下文，获取哪个进程操作了哪个文件（路径和类型）
+//获取哪个进程操作了哪个文件（路径和类型）
 typedef struct _STREAM_HANDLE_CONTEXT
 {
 	//FILE_STANDARD_INFORMATION fileInfo;//文件信息
@@ -223,12 +223,6 @@ NTSTATUS
 	__in FLT_INSTANCE_SETUP_FLAGS Flags,
 	__in DEVICE_TYPE VolumeDeviceType,
 	__in FLT_FILESYSTEM_TYPE VolumeFilesystemType
-	);
-
-VOID
-	CleanupVolumeContext(
-	__in PFLT_CONTEXT Context,
-	__in FLT_CONTEXT_TYPE ContextType
 	);
 
 VOID
@@ -334,11 +328,11 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 	
 
 
-	//{ IRP_MJ_WRITE,
-	//0,
-	//NULL,
-	//WritePost
-	//},
+	{ IRP_MJ_WRITE,
+	0,
+	WritePre, 
+	NULL,//WritePost,
+	},
 
 /*
 	{ IRP_MJ_SET_INFORMATION,   
