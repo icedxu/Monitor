@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018/5/15 17:59:05。
+﻿生成启动时间为 2018/5/16 21:24:51。
      1>项目“E:\VS_Project\Monitor\Monitor\Monitor.vcxproj”在节点 2 上(rebuild 个目标)。
      1>CoreClean:
          rmdir /s /q E:\VS_Project\Monitor\Monitor\\objchk_win7_x86
@@ -9,7 +9,7 @@
          cd /d E:\VS_Project\Monitor\Monitor\
          build
          E:\VS_Project\Monitor\Monitor\\objchk_win7_x86\Monitor.log - 另一个程序正在使用此文件，进程无法访问。
-         OACR monitor running already
+         Launching OACR monitor
          path contains nonexistant c:\program files (x86)\microsoft visual studio 10.0\common7\tools\bin, removing
          path contains nonexistant d:\qt\qt5.2.0\5.2.0\mingw\bin, removing
          BUILD: Compile and Link for x86
@@ -18,7 +18,7 @@
          
          BUILD: Computing Include file dependencies:
          
-         BUILD: Start time: Tue May 15 17:59:14 2018
+         BUILD: Start time: Wed May 16 21:25:24 2018
          BUILD: Examining e:\vs_project\monitor\monitor directory for files to compile.
          
              e:\vs_project\monitor\monitor 
@@ -34,12 +34,12 @@
          Compiling - tools.cpp
          Compiling - generating code...
          Linking Executable - objchk_win7_x86\i386\filemonitor.sys
-         BUILD: Finish time: Tue May 15 17:59:28 2018
+         BUILD: Finish time: Wed May 16 21:27:31 2018
          BUILD: Done
          
          
          
-             5 files compiled - 86 Warnings - 1,202 LPS
+             5 files compiled - 81 Warnings - 1,815 LPS
          
              1 executable built
          
@@ -47,4 +47,4 @@
 
 生成成功。
 
-已用时间 00:00:22.29
+已用时间 00:02:39.96

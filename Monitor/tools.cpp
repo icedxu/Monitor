@@ -38,7 +38,6 @@ KSPIN_LOCK HidePathListLock;
 PRKEVENT g_pEventObject = NULL;  
 //句柄信息  
 OBJECT_HANDLE_INFORMATION g_ObjectHandleInfo;  
-BOOLEAN EXIT = TRUE;
 
 
 
@@ -285,7 +284,7 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 				
 					if (NPUnicodeStringToChar(&nameInfo->Name, FileName))
 					{
-						if (strstr(FileName,"1.LOG"))
+						if (strstr(FileName,"1.log"))
 						{
 							return  STATUS_UNSUCCESSFUL;
 						}
@@ -370,10 +369,9 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
 		if (AnsiName.Length < 260) {
 			nameptr = (PCHAR)AnsiName.Buffer;
 			//Convert into upper case and copy to buffer
-
-		//	strncpy(Name, nameptr,Length/2+4);	
 			strcpy(Name, _strupr(nameptr));	
-			//DbgPrint("NPUnicodeStringToChar1 : %wZ  2 = %Z\n", UniName,AnsiName);	
+			//strncpy(Name, nameptr,Length/2);						    	    
+			//DbgPrint("NPUnicodeStringToChar : %s\n", Name);	
 		}		  	
 		RtlFreeAnsiString(&AnsiName);		 
 	} 
@@ -432,8 +430,8 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
   /***判断是否是要过滤掉的进程名  icedxu_2018_5_4**/
  BOOLEAN  IsSecretProcess(CHAR  *processName)
  {
-	// PCHAR name = ";System;svchost.exe;vmtoolsd.exe;explorer.exe;SearchProtocol;iexplore.exe;SearchIndexer;taskhost.exe;WmiApSrv.exe;";
-	 PCHAR name = "SearchIndexer;taskhost.exe;WmiApSrv.exe;vmtoolsd.exe;;";
+	 PCHAR name = ";System;svchost.exe;vmtoolsd.exe;explorer.exe;SearchProtocol;iexplore.exe;SearchIndexer;taskhost.exe;WmiApSrv.exe;";
+	// PCHAR name = "qwef;";
 	if (strstr(name,processName) > 0)
 	{
 		return TRUE;
@@ -728,7 +726,7 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
     NTSTATUS status = STATUS_SUCCESS;
 	HANDLE   hThread = NULL;
 	KEVENT kEvent;
-	//KeInitializeEvent(&kEvent,SynchronizationEvent,FALSE);
+	KeInitializeEvent(&kEvent,SynchronizationEvent,FALSE);
 	status = PsCreateSystemThread(&hThread, //创建新线程
 		   (ACCESS_MASK)THREAD_ALL_ACCESS,
 		   NULL,
@@ -745,7 +743,7 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
 	KdPrint(("创建成功 \n"));
 	ZwClose(hThread);
 
-	//KeWaitForSingleObject(&kEvent,Executive,KernelMode,FALSE,NULL);
+	KeWaitForSingleObject(&kEvent,Executive,KernelMode,FALSE,NULL);
 	return ;
  }
 
@@ -766,8 +764,8 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
 	 NTSTATUS  status;
 	 UNICODE_STRING logFileUnicodeString;
 
-	 Interval.QuadPart = DELAY_ONE_MILLISECOND;
-	 Interval.QuadPart *=Msec;
+	// Interval.QuadPart = DELAY_ONE_MILLISECOND;
+	// Interval.QuadPart *=Msec;
 
 	// GetTime();
 	// GetTime();
@@ -776,7 +774,7 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
 	// GetTime();
 
 	 RtlInitUnicodeString( &logFileUnicodeString, L"\\??\\C:\\1.LOG");
-	 while(TRUE && EXIT){
+	 while(TRUE){
 	
 		 while (!IsListEmpty(&HidePathListHeader))
 		 {
@@ -819,6 +817,7 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
 			 ExFreePool(hideList);
 		
 		 }
+
 	 
 	 }
 	// KeSetEvent(pEvent,IO_NO_INCREMENT,FALSE);
@@ -854,27 +853,3 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
      PsTerminateSystemThread(STATUS_SUCCESS);   
 	 return ;
  }  
-
-
- //RtlStringCbPrintfW(tmp, 1024, L"%x", headStream.fileHead);
-
- //char to Hex(16进制)
-
- //LENGTH_READ = 40
- BOOLEAN  CharToHex(CHAR C[] ,CHAR Hex[])
- {
-    CHAR tmp[LENGTH_READ] = {0};
-	__try{
-	      for(int i = 0; i < strlen(C);i++)
-	        { 
-			 RtlStringCbPrintfA(tmp,LENGTH_READ,"%x",C[i]);
-		    // strcat(Hex,tmp);
-			 RtlStringCbCatA(Hex,LENGTH_READ,tmp);
-	       }
-		 // KdPrint(("%s",Hex));
-		  return TRUE;
-	    }
-	__except(EXCEPTION_EXECUTE_HANDLER) {
-		return FALSE;
-	}
- }

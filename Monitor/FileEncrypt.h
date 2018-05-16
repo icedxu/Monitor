@@ -25,8 +25,7 @@
 
 
 
-#define PBUFFER_TAG  'BUF'
-#define LENGTH_READ  40
+
 
 
 
@@ -40,9 +39,6 @@ extern  PFLT_PORT gClientPort;
 extern PRKEVENT g_pEventObject;  
 //句柄信息  
 extern  OBJECT_HANDLE_INFORMATION g_ObjectHandleInfo;  
-
-
-extern BOOLEAN EXIT;
 
 
 
@@ -72,7 +68,7 @@ typedef struct _HIDE_PATH_LIST
 #define PROCESS_NAME_LEN      32
 typedef struct _PROCESS_INFO
 {
-	 CHAR processName[PROCESS_NAME_LEN];//进程名称
+	CHAR processName[PROCESS_NAME_LEN];//进程名称
 
 	_PROCESS_INFO *next;//下一个节点
 
@@ -90,7 +86,20 @@ typedef struct _TYPE_KEY_PROCESS
 } TYPE_KEY_PROCESS,*PTYPE_KEY_PROCESS;
 
 
+//
+//  This is a volume context, one of these are attached to each volume
+//  we monitor.  This is used to get a "DOS" name for debug display.
+//
 
+typedef struct _VOLUME_CONTEXT {
+
+
+    UNICODE_STRING Name;         //保存要显示的名字
+    ULONG          SectorSize;   //保存要显示的卷的大小
+
+} VOLUME_CONTEXT, *PVOLUME_CONTEXT;
+
+#define MIN_SECTOR_SIZE 0x200
 
 
 /************************************************************************/
@@ -106,31 +115,8 @@ typedef struct _PRE_2_POST_CONTEXT {
 
 
 
-//定义流上下文,判断文件头信息
-typedef struct _STREAM_HEAD
-{
-	//FILE_STANDARD_INFORMATION fileInfo;//文件信息
 
-	CHAR  fileHead[40];//文件头
-
-	BOOLEAN isRead;//文件是否被读过
-
-} STREAM_HEAD,*PSTREAM_HEAD;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//获取哪个进程操作了哪个文件（路径和类型）
+//定义流上下文，获取哪个进程操作了哪个文件（路径和类型）
 typedef struct _STREAM_HANDLE_CONTEXT
 {
 	//FILE_STANDARD_INFORMATION fileInfo;//文件信息
@@ -144,7 +130,6 @@ typedef struct _STREAM_HANDLE_CONTEXT
 	UNICODE_STRING  fileStyle; //文件类型 
 
 } STREAM_HANDLE_CONTEXT,*PSTREAM_HANDLE_CONTEXT;
-
 
 //声明 API
 extern"C" __declspec(dllimport)UCHAR*PsGetProcessImageFileName(IN PEPROCESS Process); 
@@ -226,6 +211,12 @@ NTSTATUS
 	);
 
 VOID
+	CleanupVolumeContext(
+	__in PFLT_CONTEXT Context,
+	__in FLT_CONTEXT_TYPE ContextType
+	);
+
+VOID
 	CleanupStreamHandleContext(
 	__in PFLT_CONTEXT Context,
 	__in FLT_CONTEXT_TYPE ContextType
@@ -257,14 +248,6 @@ FLT_POSTOP_CALLBACK_STATUS
 	__in FLT_POST_OPERATION_FLAGS Flags
 	);
 
-
-FLT_POSTOP_CALLBACK_STATUS
-	ReadPost(
-	__inout PFLT_CALLBACK_DATA Data,
-	__in PCFLT_RELATED_OBJECTS FltObjects,
-	__in PVOID CompletionContext,
-	__in FLT_POST_OPERATION_FLAGS Flags
-	);
 
 
 
@@ -322,23 +305,22 @@ NTSTATUS GetFileInformation(__inout PFLT_CALLBACK_DATA Data,
 CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 	{ IRP_MJ_CREATE,
 	0,
-	NULL,         //
+	NULL,         //CreatePre  可不看
 	CreatePost 
 	},
+
 	
-
-
 	{ IRP_MJ_WRITE,
 	0,
-	WritePre, 
-	NULL,//WritePost,
+	WritePre,  
+	WritePost
 	},
 
-/*
+
 	{ IRP_MJ_SET_INFORMATION,   
 	0,
 	SetInformationPre,
-	SetInformationPost },*/
+	SetInformationPost },
 
 	{ IRP_MJ_OPERATION_END }
 };
@@ -349,10 +331,16 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 //
 CONST FLT_CONTEXT_REGISTRATION ContextNotifications[] = {
 
+	{ FLT_VOLUME_CONTEXT,
+	0,
+	CleanupStreamHandleContext,
+	sizeof(VOLUME_CONTEXT),
+	CONTEXT_TAG },
+
 	{ FLT_STREAMHANDLE_CONTEXT,
 	0,
 	CleanupStreamHandleContext,
-	sizeof(STREAM_HEAD),
+	sizeof(STREAM_HANDLE_CONTEXT),
 	STREAM_HANDLE_CONTEXT_TAG },
 
 	{ FLT_CONTEXT_END }

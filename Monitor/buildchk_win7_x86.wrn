@@ -13,54 +13,50 @@
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(508) : warning C4995: 'swscanf': name was marked as #pragma deprecated
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(514) : warning C4995: '_snwscanf': name was marked as #pragma deprecated
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(518) : warning C4995: 'wscanf': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(542) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(543) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(543) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(544) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(544) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(544) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(544) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(545) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(545) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(545) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(242) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(242) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(243) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(243) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(244) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(244) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(244) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(244) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(245) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(245) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(249) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(358) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(358) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(359) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(359) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(360) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(360) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(360) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(360) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(361) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(361) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(365) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(521) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(521) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(522) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(522) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(523) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(523) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(523) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(523) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(524) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(524) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(529) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(571) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(571) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(572) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(572) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(573) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(573) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(573) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(573) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(574) : warning C4995: 'strcat': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\filemonitor.cpp(574) : warning C4995: 'strcat': name was marked as #pragma deprecated
 1>e:\vs_project\monitor\monitor\filemonitor.cpp(579) : warning C4996: 'ExAllocatePool': was declared deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(894) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(894) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(895) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(895) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(896) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(896) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(896) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(896) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(897) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(897) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(897) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(931) : warning C4996: 'ExAllocatePool': was declared deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1128) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1128) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1129) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1129) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1130) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1130) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1130) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1130) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1131) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1131) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1131) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1136) : warning C4996: 'ExAllocatePool': was declared deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1180) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1180) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1181) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1181) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1182) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1182) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1182) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1182) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1183) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1183) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1183) : warning C4995: 'strcat': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\filemonitor.cpp(1186) : warning C4996: 'ExAllocatePool': was declared deprecated
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(268) : warning C4995: 'scanf': name was marked as #pragma deprecated
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(284) : warning C4995: 'sscanf': name was marked as #pragma deprecated
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(290) : warning C4995: '_snscanf': name was marked as #pragma deprecated
@@ -75,11 +71,10 @@
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(508) : warning C4995: 'swscanf': name was marked as #pragma deprecated
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(514) : warning C4995: '_snwscanf': name was marked as #pragma deprecated
 1>d:\winddk\7600.16385.1\inc\crt\stdio.h(518) : warning C4995: 'wscanf': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\tools.cpp(347) : warning C4995: 'strcpy': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\tools.cpp(375) : warning C4995: 'strcpy': name was marked as #pragma deprecated
-1>e:\vs_project\monitor\monitor\tools.cpp(410) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
-1>e:\vs_project\monitor\monitor\tools.cpp(450) : warning C4996: 'ExAllocatePool': was declared deprecated
-1>e:\vs_project\monitor\monitor\tools.cpp(569) : warning C4129: '/' : unrecognized character escape sequence
-1>e:\vs_project\monitor\monitor\tools.cpp(679) : warning C4996: 'ExAllocatePool': was declared deprecated
-1>e:\vs_project\monitor\monitor\tools.cpp(868) : warning C4018: '<' : signed/unsigned mismatch
-1>e:\vs_project\monitor\monitor\tools.cpp(466) : warning C4715: 'IntegerToChar' : not all control paths return a value
+1>e:\vs_project\monitor\monitor\tools.cpp(346) : warning C4995: 'strcpy': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(372) : warning C4995: 'strcpy': name was marked as #pragma deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(408) : warning C4244: '=' : conversion from 'LONGLONG' to 'ULONG', possible loss of data
+1>e:\vs_project\monitor\monitor\tools.cpp(448) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(567) : warning C4129: '/' : unrecognized character escape sequence
+1>e:\vs_project\monitor\monitor\tools.cpp(677) : warning C4996: 'ExAllocatePool': was declared deprecated
+1>e:\vs_project\monitor\monitor\tools.cpp(464) : warning C4715: 'IntegerToChar' : not all control paths return a value
