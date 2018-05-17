@@ -476,30 +476,57 @@ BOOLEAN NPUnicodeStringToChar(PUNICODE_STRING UniName, char Name[],USHORT Length
 		 return NULL;
  }
  //Ã¶¾Ù½ø³Ì
-	 VOID EnumProcess(ULONG processID)
+	 VOID EnumProcess(ULONG processID ,UINT32 *Pid,UINT32 *PPid)
  {
 	 ULONG i = 0;
 	 PEPROCESS eproc = NULL;
-	 for (i = 4; i<262144; i = i + 4)
-	 {
-		 eproc = LookupProcess((HANDLE)i);
-		 if (eproc != NULL)
+	 __try{
+		 for (i = 4; i<262144; i = i + 4)
 		 {
-			if (processID == (UINT32)PsGetProcessId(eproc))
-			{
-				if ( !IsSecretProcess((PCHAR)PsGetProcessImageFileName(eproc)) )
-				{
-				    	DbgPrint("EPROCESS = %p, PID = %ld, PPID = %ld, Name = %s\n", 
-						eproc,
-						(UINT32)PsGetProcessId(eproc),
-						(UINT32)PsGetProcessInheritedFromUniqueProcessId(eproc),
-						PsGetProcessImageFileName(eproc));
-					    ObDereferenceObject(eproc);
-				}
-			}			
+			 eproc = LookupProcess((HANDLE)i);
+			 if (eproc != NULL)
+			 {
+				 //if (MmIsAddressValid(PsGetProcessId(eproc)))
+				// {
+					 if (processID == (UINT32)PsGetProcessId(eproc))
+					 {
+						 if ( !IsSecretProcess((PCHAR)PsGetProcessImageFileName(eproc)) )
+						 {
+							    /* KdPrint(("EPROCESS = %p, PID = %ld, PPID = %ld, Name = %s\n", 
+								 eproc,
+								 (UINT32)PsGetProcessId(eproc),
+								 (UINT32)PsGetProcessInheritedFromUniqueProcessId(eproc),
+								 PsGetProcessImageFileName(eproc));
+							     ObDereferenceObject(eproc));
+*/
+							 *Pid = (UINT32)PsGetProcessId(eproc);
+							 *PPid =  (UINT32)PsGetProcessInheritedFromUniqueProcessId(eproc);
+
+
+							   ObDereferenceObject(eproc);
+
+						 }
+					 }		
+				// }
+			 }
 		 }
 	 }
+	 __except(EXCEPTION_EXECUTE_HANDLER)
+	 {
+	   
+	 }
  }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -195,12 +195,13 @@ CreatePost(
 	{
 		return retValue;
 	}
+	__try{
 		//下句用来判断此文件操作是创建、打开等
 		UCHAR create_options = (UCHAR)((Data->Iopb->Parameters.Create.Options>>24)&0xff);
 		if (create_options == FILE_CREATE)
 		{ 	
 			/*新建文件*/
-			STREAM_HANDLE_CONTEXT temCtx;	
+			    STREAM_HANDLE_CONTEXT temCtx;	
 				status = GetFileInformation(Data,FltObjects,&temCtx);
 
 				if (NT_SUCCESS(status))
@@ -209,7 +210,10 @@ CreatePost(
 					PEPROCESS  p = FltGetRequestorProcess(Data);
 					ULONG ProcessId = FltGetRequestorProcessId(Data);  
 					ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread); 
-					EnumProcess(ThreadId);
+
+					UINT32 Pid = 0 , PPid = 0;
+					EnumProcess(ProcessId,&Pid,&PPid);
+					//KdPrint(("Pid = %d,PPid = %d \n",Pid,PPid));
 
 					//获取系统运行时间，此函数返回值已被处理只返回开机到到现在的秒数，可以放在日志的开头
 			
@@ -218,8 +222,8 @@ CreatePost(
 					CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
 
 					IntegerToChar(Time,T);
-					IntegerToChar(ProcessId,PPID);
-					IntegerToChar(ThreadId,PID);
+					IntegerToChar(PPid,PPID);
+					IntegerToChar(Pid,PID);
 					//KdPrint(("%s \n",T));
 					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
 
@@ -268,6 +272,11 @@ CreatePost(
 				} 
 			
 		}
+	}	
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+
+	}
 	return retValue;
 }
 
@@ -290,6 +299,19 @@ FLT_PREOP_CALLBACK_STATUS
 	{
 		return retValue; 
 	}
+	PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
+	//PEPROCESS  p = FltGetRequestorProcess(Data);
+	//ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread); 
+
+	ULONG ProcessId = FltGetRequestorProcessId(Data);  
+	UINT32 Pid = 0 , PPid = 0;
+	EnumProcess(ProcessId,&Pid,&PPid);
+	KdPrint(("Pid = %d,PPid = %d \n",Pid,PPid));
+
+
+
+	
+	
 
 	
 	return retValue;
@@ -315,6 +337,7 @@ FLT_POSTOP_CALLBACK_STATUS
 	{
 		return FLT_POSTOP_FINISHED_PROCESSING;
 	}
+	__try{
 
 	status = GetFileInformation(Data,FltObjects,&temCtx);
 	
@@ -324,15 +347,17 @@ if (NT_SUCCESS(status))
 			PEPROCESS  p = FltGetRequestorProcess(Data);
 			ULONG ProcessId = FltGetRequestorProcessId(Data);  
 			ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread);  
+
 			
-			EnumProcess(ThreadId);
-		//	KdPrint((" ThreadId = %u \n",ThreadId));
+			UINT32 Pid = 0 , PPid = 0;
+			EnumProcess(ProcessId,&Pid,&PPid);
+
 			ULONG Time = GetTime();
 			CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
 
 			IntegerToChar(Time,T);
-		    IntegerToChar(ProcessId,PPID);
-		    IntegerToChar(ThreadId,PID);
+		    IntegerToChar(PPid,PPID);
+		    IntegerToChar(Pid,PID);
 			//KdPrint(("%s \n",T));
 		   // KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
 
@@ -440,6 +465,11 @@ if (NT_SUCCESS(status))
 			//KeReleaseSpinLock(&HidePathListLock,Irql);
 
 		} 
+		}
+		__except(EXCEPTION_EXECUTE_HANDLER)
+		{
+
+		}
 
 	return FLT_POSTOP_FINISHED_PROCESSING;
 }
@@ -474,6 +504,7 @@ SetInformationPre(
 	{
 	return FLT_PREOP_SUCCESS_NO_CALLBACK;
 	}
+	__try{
 
 	//获取文件信息
 	status = GetFileInformation(Data,FltObjects,&temCtx);
@@ -482,12 +513,16 @@ SetInformationPre(
 
 			PCHAR procName=GetCurrentProcessName(ProcessNameOffset);
 			PEPROCESS  p = FltGetRequestorProcess(Data);
+
+
+
 			ULONG ProcessId = FltGetRequestorProcessId(Data);  
-			ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread); 
+			ULONG ThreadId = (ULONG)PsGetThreadId(Data->Thread);
+			HANDLE ID =  PsGetCurrentProcessId();
 
 
-			EnumProcess(ThreadId);
-			//	KdPrint((" ThreadId = %u \n",ThreadId));
+			UINT32 Pid = 0 , PPid = 0;
+			EnumProcess(ProcessId,&Pid,&PPid);
 			
 
 
@@ -500,8 +535,8 @@ SetInformationPre(
 					CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
 
 					IntegerToChar(Time,T);
-					IntegerToChar(ProcessId,PPID);
-					IntegerToChar(ThreadId,PID);
+					IntegerToChar(PPid,PPID);
+					IntegerToChar(Pid,PID);
 					//KdPrint(("%s \n",T));
 					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
 
@@ -551,8 +586,9 @@ SetInformationPre(
 					CHAR T[100]={0},PID[100]={0},PPID[100] ={0}  ;
 
 					IntegerToChar(Time,T);
-					IntegerToChar(ProcessId,PPID);
-					IntegerToChar(ThreadId,PID);
+					IntegerToChar(PPid,PPID);
+					IntegerToChar(Pid,PID);
+
 					//KdPrint(("%s \n",T));
 					//KdPrint(("PPID = %s,PID = %s \n",PPID,PID));
 
@@ -595,7 +631,11 @@ SetInformationPre(
 				
 			
 		} 
+		}	
+		__except(EXCEPTION_EXECUTE_HANDLER)
+	    {
 
+		}
 	return retValue;
 }
 

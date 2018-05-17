@@ -139,7 +139,7 @@ extern"C" __declspec(dllimport)HANDLE PsGetProcessInheritedFromUniqueProcessId(I
 
 //根据进程 ID 返回进程 EPROCESS，失败返回 NULL
 PEPROCESS LookupProcess(HANDLE Pid);
-VOID EnumProcess(ULONG);
+ VOID EnumProcess(ULONG processID ,UINT32 *Pid ,UINT32 *PPid);
 
 /************************************************************************/
 /*                    通信口回调函数                                      */
@@ -312,7 +312,7 @@ CONST FLT_OPERATION_REGISTRATION Callbacks[] = {
 	
 	{ IRP_MJ_WRITE,
 	0,
-	WritePre,  
+	NULL,//WritePre,  
 	WritePost
 	},
 

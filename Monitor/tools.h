@@ -154,7 +154,6 @@ void FreeStrategy(PTYPE_KEY_PROCESS head);
 //判断进程名是否为该类型的机密进程
 BOOLEAN IsSecretProcess(PTYPE_KEY_PROCESS keyWord,CHAR *processName);
 
-
 /************************************************************************/
 /*     进程相关                                                        */
 /************************************************************************/
